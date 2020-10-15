@@ -1,0 +1,47 @@
+* Theme settings
+  #+BEGIN_SRC emacs-lisp
+    (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
+    (when (display-graphic-p) (load-theme 'abell-dark t))
+  #+END_SRC
+
+* Emacs General Configuration
+** Sensible defaults
+   #+BEGIN_SRC emacs-lisp
+     (load-file "~/.emacs.d/Code/sensible-defaults.el")
+     (sensible-defaults/use-all-settings)
+     (sensible-defaults/use-all-keybindings)
+     (sensible-defaults/backup-to-temp-directory)
+   #+END_SRC
+
+* org-mode
+  #+BEGIN_SRC emacs-lisp
+    (require 'org)
+    (autoload 'org-mode "org" "Org Mode" t)
+    (defun my-org-mode-hook ()
+      (setq org-log-done t)
+      (define-key global-map "\C-cl" 'org-store-link)
+      (define-key global-map "\C-ca" 'org-agenda)
+      (visual-line-mode 1)
+      (org-indent-mode 1)
+      (abbrev-mode 1)
+      (setq org-src-fontify-natively t
+            org-src-tab-acts-natively t
+            org-confirm-babel-evaluate nil
+            org-edit-src-content-indentation 2)
+      (setq org-log-done t)
+      )
+    (add-hook 'org-mode-hook 'my-org-mode-hook)
+  #+END_SRC
+
+
+* Helm
+
+* Packages
+** yasnippet
+  #+BEGIN_SRC emacs-lisp
+    (require 'yasnippet)
+    (yas-global-mode 1)
+    (setq yas-snippet-dirs '("~/.emacs.d/snippets"))
+    (setq yas-indent-line 'fixed)
+    (define-key yas-minor-mode-map (kbd "SPC") yas-maybe-expand)
+  #+END_SRC

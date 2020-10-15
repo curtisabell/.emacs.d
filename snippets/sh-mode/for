@@ -1,0 +1,4 @@
+for $1 in $2
+do
+    $0
+done

@@ -1,0 +1,5 @@
+(use-package $0
+  :ensure t
+  :init
+  :config
+  )

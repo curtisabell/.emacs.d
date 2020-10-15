@@ -1,0 +1,16 @@
+#!/usr/bin/python3
+import matplotlib.pyplot as pypl
+import numpy as np
+from pylab import *
+from matplotlib import rc
+import math
+
+pypl.style.use('classic')
+pypl.rc('font', size=18, **{'family': 'serif', 'serif': ['Computer Modern']})
+pypl.rc('text', usetex=True)
+
+fig, ax = pypl.subplots()
+
+$0
+
+pypl.show()
