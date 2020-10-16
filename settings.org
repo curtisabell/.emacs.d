@@ -74,24 +74,41 @@
 
 * Major modes
 ** org mode
-  #+BEGIN_SRC emacs-lisp
-    (require 'org)
-    (autoload 'org-mode "org" "Org Mode" t)
-    (defun my-org-mode-hook ()
-      (setq org-log-done t)
-      (define-key global-map "\C-cl" 'org-store-link)
-      (define-key global-map "\C-ca" 'org-agenda)
-      (visual-line-mode 1)
-      (org-indent-mode 1)
-      (abbrev-mode 1)
-      (setq org-src-fontify-natively t
-            org-src-tab-acts-natively t
-            org-confirm-babel-evaluate nil
-            org-edit-src-content-indentation 2)
-      (setq org-log-done t)
-      )
-    (add-hook 'org-mode-hook 'my-org-mode-hook)
-  #+END_SRC
+#+BEGIN_SRC emacs-lisp
+(require 'org)
+   (autoload 'org-mode "org" "Org Mode" t)
+  (defun my-org-mode-hook ()
+    (setq org-log-done t)
+    (define-key global-map "\C-cl" 'org-store-link)
+    (define-key global-map "\C-ca" 'org-agenda)
+    (visual-line-mode 1)
+    (org-indent-mode 1)
+    (abbrev-mode 1)
+    (setq org-src-fontify-natively t
+          org-src-tab-acts-natively t
+          org-confirm-babel-evaluate nil
+          org-edit-src-content-indentation 2)
+    )
+  (add-hook 'org-mode-hook 'my-org-mode-hook)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (require 'color)
+  (set-face-attribute 'org-block nil :background
+                      (color-darken-name
+                       (face-attribute 'default :background) 3))
+#+END_SRC
+
+*** org-bullets mode
+#+BEGIN_SRC emacs-lisp
+  (use-package org-bullets
+    :ensure t
+    :bind-keymap
+    :init
+    (org-bullets-mode 1)
+    :config
+    )
+#+END_SRC
 
 ** f90 mode
 #+BEGIN_SRC emacs-lisp
@@ -238,8 +255,6 @@
 #+BEGIN_SRC emacs-lisp
   (use-package yasnippet
     :ensure t
-    :bind-keymap
-    ;; ("SPC" . yas-maybe-expand)
     :init
     (yas-global-mode 1)
     :config
@@ -253,13 +268,12 @@
 #+BEGIN_SRC emacs-lisp
   (use-package simpleclip
     :ensure t
-    :bind-keymap
-    ("H-x" . simpleclip-cut)
-    ("H-c" . simpleclip-copy)
-    ("H-v" . simpleclip-paste)
     :init
     (simpleclip-mode 1)
     :config
+    (global-set-key (kbd "H-x") 'simpleclip-cut)
+    (global-set-key (kbd "H-c") 'simpleclip-copy)
+    (global-set-key (kbd "H-v") 'simpleclip-paste)
     )
 #+END_SRC
 
@@ -305,7 +319,7 @@
   (global-set-key (kbd "H-M-<down>") 'abell/comment-swap-below)
 #+END_SRC
 
-** Comment header lines
+** Insert a comment header in each language
 #+BEGIN_SRC emacs-lisp
   (defun abell/general-comment-header (title)
     "Inserts a commented title"

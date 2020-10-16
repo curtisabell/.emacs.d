@@ -17,8 +17,10 @@
  '(font-lock-keyword-face ((t (:bold t :foreground "Cyan"))))
  ;;; '(font-lock-keyword-face
  '(font-lock-warning-face ((t (:bold t :foreground "Pink"))))
- ;;; No use in fortran?
- '(font-lock-constant-face ((t (:foreground "DarkGreen"))))
+ ;;; No use in fortran? - used for labels
+ ;;; Used for things like package names in use-package
+ '(font-lock-constant-face ((t (:foreground "OrangeRed"))))
+ ;; '(font-lock-constant-face ((t (:foreground "DarkGreen"))))
  ;;; Variable types (real, int etc) ForestGreen
  '(font-lock-type-face ((t (:foreground "green3"))))
  ;;; Variable names
@@ -36,6 +38,16 @@
  '(secondary-selection ((t (:background "navy"))))
  '(widget-field-face ((t (:background "navy"))))
  '(widget-single-line-field-face ((t (:background "royalblue")))))
+
+
+  ;; ;; ;;; Org-mode appearance
+  ;; (org-block-begin-line
+  ;;   ((t (:underline "black" :foreground "white" :background "gray10"))))
+  ;; (org-block-background
+  ;;   ((t (:background "gray20"))))
+  ;; (org-block-end-line
+  ;;   ((t (:overline "black" :foreground "white" :background "gray10"))))
+
 
 ;;;###autoload
 (when load-file-name
