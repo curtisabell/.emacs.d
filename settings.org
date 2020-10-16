@@ -15,6 +15,9 @@
 
 ** Other config
 #+BEGIN_SRC emacs-lisp
+  (set-language-environment "UTF-8")
+  (set-default-coding-systems 'utf-8)
+
   ;; Tab inserts spaces
   (setq-default indent-tabs-mode 0)
 
@@ -61,7 +64,7 @@
 
   ;; Display time in mode line
   (setq display-time-string-forms
-        '((propertize (format-time-string " %b %d, %l:%M%P" now) 'face 'bold)))
+          '((propertize (format-time-string " %b %d, %l:%M%P" now) 'face 'bold)))
   (setq display-time-and-date t)
   (display-time-mode 1)
 
@@ -70,7 +73,7 @@
 #+END_SRC
 
 * Major modes
-** org-mode
+** org mode
   #+BEGIN_SRC emacs-lisp
     (require 'org)
     (autoload 'org-mode "org" "Org Mode" t)
@@ -90,18 +93,145 @@
     (add-hook 'org-mode-hook 'my-org-mode-hook)
   #+END_SRC
 
-** Fortran-mode
+** f90 mode
+#+BEGIN_SRC emacs-lisp
+  (defun my-f90-mode-hook ()
+    (setq f90-font-lock-keywords f90-font-lock-keywords-3)
+    '(f90-comment-region "!!!$")
+    '(f90-indented-comment-re "!")
+    (abbrev-mode 1)                       ; turn on abbreviation mode
+    (turn-on-font-lock)                   ; syntax highlighting
+    (auto-fill-mode 0)                    ; turn off auto-filling
+    ;; (local-set-key (kbd "H-t") 'abell/f90-comment-header)
+    (local-set-key (kbd "H-M-h") 'abell/f90-comment-header-block)
+    (local-set-key (kbd "H-w") 'abell/insert-f90-write)
+    (local-set-key (kbd "C-H-w") 'abell/insert-f90-write)
+    ;; (local-set-key (kbd "H-p") 'abell/insert-f90-print)
+    (local-set-key (kbd "H-p") 'abell/insert-double-precision)
+    )
+  (add-hook 'f90-mode-hook 'my-f90-mode-hook)
+#+END_SRC
+
+* Minor modes
+** linum mode
+#+BEGIN_SRC emacs-lisp
+  (require 'linum)
+  (setq linum-disabled-modes-list '(eshell-mode wl-summary-mode
+       compilation-mode text-mode dired-mode pdf-view-mode
+       doc-view-mode shell-mode pdf-view-mode image-mode
+       term-mode))
+#+END_SRC
 
 * Packages
 ** Helm
 #+BEGIN_SRC emacs-lisp
-    (use-package
-       :ensure t
-       :bind-keymap
-       :init
-       :config
-       (require 'helm-config)
-       )
+  (use-package helm
+    :ensure f
+    :bind-keymap
+    ("M-x" . helm-M-x)
+    ("C-x C-f" . helm-find-files)
+    ("C-x C-b" . helm-buffers-list)
+    ("C-x b" . helm-mini)
+    :init
+    (helm-mode 1)
+    :config
+    (require 'helm-config)
+    (setq helm-ff-skip-boring-files t)
+    )
+#+END_SRC
+
+*** helm-spotify-plus
+#+BEGIN_SRC emacs-lisp
+  (use-package helm-spotify-plus
+    :ensure helm
+    :bind-keymap
+    ("H-s H-n" . helm-spotify-plus-next)
+    ("H-s H-p" . helm-spotify-plus-previous)
+    ("H-s H-SPC" . helm-spotify-plus-toggle-play-pause)
+    )
+#+END_SRC
+
+** projectile
+#+BEGIN_SRC emacs-lisp
+  (use-package projectile
+    :ensure t
+    :bind-keymap
+    ("C-c p" . projectile-command-map)
+    :init
+    :config
+    )
+#+END_SRC
+
+*** helm-projectile
+#+BEGIN_SRC emacs-lisp
+  (use-package helm-projectile
+    :ensure t
+    :init
+    (helm-projectile-on)
+    :config
+    )
+#+END_SRC
+
+** spaceline
+#+BEGIN_SRC emacs-lisp
+  (use-package spaceline
+    :ensure t
+    :config
+    (setq-default mode-line-format '("%e" (:eval (spaceline-ml-main)))))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (use-package spaceline-config
+    :ensure spaceline
+    :config
+    (spaceline-helm-mode 1)
+    (spaceline-install
+     'main
+     '((buffer-modified)
+       ((remote-host buffer-id) :face highlight-face)
+       (process :when active))
+     '((selection-info :face 'region :when mark-active)
+       ((flycheck-error flycheck-warning flycheck-info) :when active)
+       (which-function)
+       (version-control :when active)
+       (line-column)
+       (global :when active)
+       (major-mode)))
+    )
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (setq-default
+   powerline-height 24
+   powerline-default-separator 'wave
+   spaceline-flycheck-bullet "❖ %s"
+   spaceline-separator-dir-left '(right . right)
+   spaceline-separator-dir-right '(left . left)
+   )
+#+END_SRC
+
+** ace window
+#+BEGIN_SRC emacs-lisp
+  (use-package ace-window
+    :ensure t
+    :bind-keymap
+    ("H-o" . ace-select-window)
+    ("H-1" . ace-switch-1)
+    ("H-2" . ace-switch-2)
+    ("H-3" . ace-switch-3)
+    ("H-4" . ace-switch-4)
+    :init
+    :config
+    (fset 'ace-switch-1
+          [?\H-o ?1])
+    (fset 'ace-switch-2
+          [?\H-o ?2])
+    (fset 'ace-switch-3
+          [?\H-o ?3])
+    (fset 'ace-switch-4
+          [?\H-o ?4])
+
+    )
 #+END_SRC
 
 ** yasnippet

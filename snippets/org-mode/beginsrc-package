@@ -1,0 +1,8 @@
+#+BEGIN_SRC emacs-lisp
+  (use-package $0
+    :ensure t
+    :bind-keymap
+    :init
+    :config
+    )
+#+END_SRC
