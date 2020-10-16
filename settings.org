@@ -11,9 +11,66 @@
      (sensible-defaults/use-all-settings)
      (sensible-defaults/use-all-keybindings)
      (sensible-defaults/backup-to-temp-directory)
-   #+END_SRC
+ #+END_SRC
 
-* org-mode
+** Other config
+#+BEGIN_SRC emacs-lisp
+  ;; Tab inserts spaces
+  (setq-default indent-tabs-mode 0)
+
+  ;; Delete selection upon backspacing or typing.
+  (delete-selection-mode 0)
+
+  ;; Don't show menu or scroll bar
+  (tool-bar-mode 0)
+  (menu-bar-mode 0)
+  (when window-system
+    (scroll-bar-mode -1))
+
+  ;; Emacs has a silly warning bell by default. This gets rid of it.
+  (setq ring-bell-function 'ignore)
+
+  ;; Fix Emacs' mouse scrolling behaviour
+  (setq scroll-conservatively 100) ;; When cursor moves outside window, don't jump erratically
+  (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
+  (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
+  ;; (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
+
+  ;; Highlight the current line in GUI
+  ;; (when window-system
+  ;;   (global-hl-line-mode))
+
+  ;; Enable disabled commands
+  (put 'narrow-to-region 'disabled nil)
+
+  ;; Avoid truncation of emacs term (default 2048)
+  ;; (setq 'term-buffer-maximum-size 0)
+
+  ;; Fix startup behaviour. Don't show startup screen, replace with dashboard.
+  (setq inhibit-startup-screen t)
+
+  ;; Settings changed through Emacs interface are stored in separate file
+  (setq custom-file "~/.emacs.d/custom.el")
+  (load custom-file :noerror)
+
+  ;; camelCase recognition
+  (global-subword-mode)
+
+  ;; c global tab width
+  (setq tab-width 5)
+
+  ;; Display time in mode line
+  (setq display-time-string-forms
+        '((propertize (format-time-string " %b %d, %l:%M%P" now) 'face 'bold)))
+  (setq display-time-and-date t)
+  (display-time-mode 1)
+
+  ;; Abbreviate all 'Yes/No' prompts to 'y/n'
+  (fset 'yes-or-no-p 'y-or-n-p)
+#+END_SRC
+
+* Major modes
+** org-mode
   #+BEGIN_SRC emacs-lisp
     (require 'org)
     (autoload 'org-mode "org" "Org Mode" t)
@@ -33,7 +90,7 @@
     (add-hook 'org-mode-hook 'my-org-mode-hook)
   #+END_SRC
 
-* Languages
+** Fortran-mode
 
 * Helm
 
@@ -46,3 +103,218 @@
     (setq yas-indent-line 'fixed)
     (define-key yas-minor-mode-map (kbd "SPC") yas-maybe-expand)
   #+END_SRC
+
+** simpleclip
+#+BEGIN_SRC emacs-lisp
+  (use-package simpleclip
+    :ensure t
+    :bind-keymap
+    ("H-x" . simpleclip-cut)
+    ("H-c" . simpleclip-copy)
+    ("H-v" . simpleclip-paste)
+    :init
+    (simpleclip-mode 1)
+    :config
+    )
+#+END_SRC
+
+
+* Misc Functions
+** Yank to a newline
+#+BEGIN_SRC emacs-lisp
+  (defun abell/newline-yank ()
+    (interactive)
+    (newline)
+    (yank)
+    )
+  (global-set-key (kbd "<C-return>") 'abell/newline-yank)
+#+END_SRC
+
+** Display current buffer filename
+#+BEGIN_SRC emacs-lisp
+  (defun abell/view-buffer-name ()
+    "Display the filename of the current buffer."
+    (interactive)
+    (message (buffer-file-name)))
+  (global-set-key (kbd "H-b") 'abell/view-buffer-name)
+#+END_SRC
+
+** Swapping lines being commented above and below
+#+BEGIN_SRC emacs-lisp
+  (defun abell/comment-swap-above ()
+    "Comments out the current line, and uncomments the line above"
+    (interactive)
+    (sensible-defaults/comment-or-uncomment-region-or-line)
+    (previous-line)
+    (sensible-defaults/comment-or-uncomment-region-or-line)
+    )
+  (global-set-key (kbd "H-M-<up>") 'abell/comment-swap-above)
+
+  (defun abell/comment-swap-below ()
+    "Comments out the current line, and uncomments the line below"
+    (interactive)
+    (sensible-defaults/comment-or-uncomment-region-or-line)
+    (next-line)
+    (sensible-defaults/comment-or-uncomment-region-or-line)
+    )
+  (global-set-key (kbd "H-M-<down>") 'abell/comment-swap-below)
+#+END_SRC
+
+** Comment header lines
+#+BEGIN_SRC emacs-lisp
+  (defun abell/general-comment-header (title)
+    "Inserts a commented title"
+    (interactive "sEnter a title: ")
+    (defvar dash-len 1)
+    (setq dash-len (/ (- 66 (length title)) 2))
+    (dotimes (ii dash-len)
+      (insert "-"))
+    (if (= (mod (length title) 2) 1)
+        (insert "-")
+      )
+    (insert title)
+    (dotimes (ii dash-len)
+      (insert "-"))
+    (sensible-defaults/comment-or-uncomment-region-or-line)
+    (indent-for-tab-command)
+    )
+  (global-set-key (kbd "H-h") 'abell/general-comment-header)
+#+END_SRC
+
+** Change between vertical and horizontal windows splitting
+#+BEGIN_SRC emacs-lisp
+  (defun my/window-split-toggle ()
+    "Toggle between horizontal and vertical split with two windows."
+    (interactive)
+    (if (> (length (window-list)) 2)
+        (error "Can't toggle with more than 2 windows!")
+      (let ((func (if (window-full-height-p)
+                      #'split-window-vertically
+                    #'split-window-horizontally)))
+        (delete-other-windows)
+        (funcall func)
+        (save-selected-window
+          (other-window 1)
+          (switch-to-buffer (other-buffer))))))
+  (global-set-key (kbd "H-f") 'my/window-split-toggle)
+#+END_SRC
+
+** Quick access to this file
+#+BEGIN_SRC emacs-lisp
+  (defun abell/visit-emacs-config ()
+    (interactive)
+    (find-file "~/.emacs.d/settings.org"))
+  (global-set-key (kbd "C-c e") 'abell/visit-emacs-config)
+
+  (defun abell/visit-emacs-config-other-window ()
+    (interactive)
+    (find-file-other-window "~/.emacs.d/settings.org"))
+  (global-set-key (kbd "C-c M-e") 'abell/visit-emacs-config-other-window)
+#+END_SRC
+
+** Quick access to bashrc
+#+BEGIN_SRC emacs-lisp
+  (defun abell/visit-bashrc ()
+    (interactive)
+    (if (file-exists-p "~/.bash_config")
+        (find-file "~/.bash_config")
+      (find-file "~/.bashrc")
+      )
+    )
+  (global-set-key (kbd "C-c b") 'abell/visit-bashrc)
+#+END_SRC
+
+** Move lines up and down
+#+BEGIN_SRC emacs-lisp
+  (defun abell/move-line-up ()
+    (interactive)
+    (transpose-lines 1)
+    (previous-line 2))
+  (global-set-key (kbd "M-<up>") 'abell/move-line-up)
+
+  (defun abell/move-line-down ()
+    (interactive)
+    (forward-line 1)
+    (transpose-lines 1)
+    (previous-line 1))
+  (global-set-key (kbd "M-<down>") 'abell/move-line-down)
+#+END_SRC
+
+** Duplicate current line
+#+BEGIN_SRC emacs-lisp
+  (defun duplicate-current-line-or-region (arg)
+    "Duplicates the current line or region ARG times.
+  If there's no region, the current line will be duplicated. However, if
+  there's a region, all lines that region covers will be duplicated."
+    (interactive "p")
+    (let (beg end (origin (point)))
+      (if (and mark-active (> (point) (mark)))
+          (exchange-point-and-mark))
+      (setq beg (line-beginning-position))
+      (if mark-active
+          (exchange-point-and-mark))
+      (setq end (line-end-position))
+      (let ((region (buffer-substring-no-properties beg end)))
+        (dotimes (i arg)
+          (goto-char end)
+          (newline)
+          (insert region)
+          (setq end (point)))
+        (goto-char (+ origin (* (length region) arg) arg)))))
+  (global-set-key (kbd "H-d") 'duplicate-current-line-or-region)
+#+END_SRC
+
+** Kill buffer and frame
+#+BEGIN_SRC emacs-lisp
+  (defun abell/kill-buffer-and-frame ()
+    (interactive)
+    (kill-this-buffer)
+    (delete-frame))
+  (global-set-key (kbd "C-x 5 k") 'abell/kill-buffer-and-frame)
+#+END_SRC
+
+** Run python3 in this buffer
+#+BEGIN_SRC emacs-lisp
+  (defun abell/run-python3 ()
+    (interactive)
+    (let ((buf (ansi-term "/usr/bin/python3")))))
+#+END_SRC
+
+** Open/close terminal in other window
+#+BEGIN_SRC emacs-lisp
+  (defun abell/open-term-other-window ()
+    (interactive)
+    (let ((buf (ansi-term "/bin/bash")))
+      (switch-to-buffer (other-buffer buf))
+      (switch-to-buffer-other-window buf)))
+  (global-set-key (kbd "C-x 4 t") 'abell/open-term-other-window)
+  (defun abell/open-term-other-window-below ()
+        (interactive)
+        (split-window-below -9)
+        (other-window ansi-term)
+        (1 "/bin/bash")
+      )
+  (defun abell/open-term-close-window ()
+    (interactive)
+    (switch-to-buffer-other-window "*terminal*")
+    (kill-buffer-and-window)
+    )
+  (add-hook 'term-exec-hook
+            (lambda () (set-process-query-on-exit-flag (get-buffer-process (current-buffer)) nil)))
+  (global-set-key (kbd "H-t") 'abell/open-term-other-window)
+  (global-set-key (kbd "H-M-t") 'abell/open-term-close-window)
+#+END_SRC
+
+
+* Misc keybindings
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "M-n") 'forward-paragraph)
+  (global-set-key (kbd "M-p") 'backward-paragraph)
+  (global-set-key (kbd "M-]") 'other-frame)
+  (global-set-key (kbd "M-[") 'other-window)
+  (global-set-key (kbd "C-x 4 k") 'kill-buffer-and-window)
+  (global-set-key (kbd "<menu>") 'shell-command)
+  (global-set-key (kbd "C-c n") (lambda () (interactive) (insert-char 10008))) ; ✘
+  (global-set-key (kbd "H-y") (lambda () (interactive) (insert-char 10004))) ; ✔
+  (global-set-key (kbd "C-H-y") (lambda () (interactive) (count-matches "✔" 0 nil t))) ; Count ✔
+#+END_SRC
