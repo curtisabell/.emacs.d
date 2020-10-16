@@ -95,21 +95,21 @@
 
 ** f90 mode
 #+BEGIN_SRC emacs-lisp
-  (defun my-f90-mode-hook ()
-    (setq f90-font-lock-keywords f90-font-lock-keywords-3)
-    '(f90-comment-region "!!!$")
-    '(f90-indented-comment-re "!")
-    (abbrev-mode 1)                       ; turn on abbreviation mode
-    (turn-on-font-lock)                   ; syntax highlighting
-    (auto-fill-mode 0)                    ; turn off auto-filling
-    ;; (local-set-key (kbd "H-t") 'abell/f90-comment-header)
-    (local-set-key (kbd "H-M-h") 'abell/f90-comment-header-block)
-    (local-set-key (kbd "H-w") 'abell/insert-f90-write)
-    (local-set-key (kbd "C-H-w") 'abell/insert-f90-write)
-    ;; (local-set-key (kbd "H-p") 'abell/insert-f90-print)
-    (local-set-key (kbd "H-p") 'abell/insert-double-precision)
-    )
-  (add-hook 'f90-mode-hook 'my-f90-mode-hook)
+  ;; (defun my-f90-mode-hook ()
+  ;;   (setq f90-font-lock-keywords f90-font-lock-keywords-3)
+  ;;   '(f90-comment-region "!!!$")
+  ;;   '(f90-indented-comment-re "!")
+  ;;   (abbrev-mode 1)                       ; turn on abbreviation mode
+  ;;   (turn-on-font-lock)                   ; syntax highlighting
+  ;;   (auto-fill-mode 0)                    ; turn off auto-filling
+  ;;   ;; (local-set-key (kbd "H-t") 'abell/f90-comment-header)
+  ;;   (local-set-key (kbd "H-M-h") 'abell/f90-comment-header-block)
+  ;;   (local-set-key (kbd "H-w") 'abell/insert-f90-write)
+  ;;   (local-set-key (kbd "C-H-w") 'abell/insert-f90-write)
+  ;;   ;; (local-set-key (kbd "H-p") 'abell/insert-f90-print)
+  ;;   (local-set-key (kbd "H-p") 'abell/insert-double-precision)
+  ;;   )
+  ;; (add-hook 'f90-mode-hook 'my-f90-mode-hook)
 #+END_SRC
 
 * Minor modes
@@ -126,16 +126,16 @@
 ** Helm
 #+BEGIN_SRC emacs-lisp
   (use-package helm
-    :ensure f
+    :ensure t
     :bind-keymap
-    ("M-x" . helm-M-x)
-    ("C-x C-f" . helm-find-files)
-    ("C-x C-b" . helm-buffers-list)
-    ("C-x b" . helm-mini)
     :init
     (helm-mode 1)
     :config
     (require 'helm-config)
+    (global-set-key (kbd "M-x") 'helm-M-x)
+    (global-set-key (kbd "C-x C-f") 'helm-find-files)
+    (global-set-key (kbd "C-x C-b") 'helm-buffers-list)
+    (global-set-key (kbd "C-x b") 'helm-mini)
     (setq helm-ff-skip-boring-files t)
     )
 #+END_SRC

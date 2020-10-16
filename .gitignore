@@ -1,5 +1,7 @@
 *
 !.gitignore
+!.github/
+!.github/README.org
 !snippets/
 !snippets/*
 !snippets/*/
