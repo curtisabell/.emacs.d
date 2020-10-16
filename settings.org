@@ -75,39 +75,53 @@
 * Major modes
 ** org mode
 #+BEGIN_SRC emacs-lisp
-(require 'org)
-   (autoload 'org-mode "org" "Org Mode" t)
-  (defun my-org-mode-hook ()
-    (setq org-log-done t)
-    (define-key global-map "\C-cl" 'org-store-link)
-    (define-key global-map "\C-ca" 'org-agenda)
-    (visual-line-mode 1)
-    (org-indent-mode 1)
-    (abbrev-mode 1)
-    (setq org-src-fontify-natively t
-          org-src-tab-acts-natively t
-          org-confirm-babel-evaluate nil
-          org-edit-src-content-indentation 2)
-    )
-  (add-hook 'org-mode-hook 'my-org-mode-hook)
+  (require 'org)
+     (autoload 'org-mode "org" "Org Mode" t)
+    (defun my-org-mode-hook ()
+      (setq org-log-done t)
+      (define-key global-map "\C-cl" 'org-store-link)
+      (define-key global-map "\C-ca" 'org-agenda)
+      (visual-line-mode 1)
+      (org-indent-mode 1)
+      (abbrev-mode 1)
+      (setq org-src-fontify-natively t
+            org-src-tab-acts-natively t
+            org-confirm-babel-evaluate nil
+            org-edit-src-content-indentation 2)
+      (setq org-hide-emphasis-markers t)
+      )
+    (add-hook 'org-mode-hook 'my-org-mode-hook)
 #+END_SRC
 
+*** Change dashes to bullets in lists
 #+BEGIN_SRC emacs-lisp
-  (require 'color)
-  (set-face-attribute 'org-block nil :background
-                      (color-darken-name
-                       (face-attribute 'default :background) 3))
+  (font-lock-add-keywords 'org-mode
+                          '(("^ +\\([-*]\\) "
+                             (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
 #+END_SRC
 
 *** org-bullets mode
 #+BEGIN_SRC emacs-lisp
   (use-package org-bullets
     :ensure t
-    :bind-keymap
     :init
     (org-bullets-mode 1)
     :config
     )
+#+END_SRC
+
+*** Variable header sizes
+#+BEGIN_SRC emacs-lisp
+  (custom-theme-set-faces 'user
+                          `(org-level-8 ((t (:font "DejaVu Serif" :weight bold :height 1.1))))
+                          `(org-level-7 ((t (:font "DejaVu Serif" :weight bold :height 1.1))))
+                          `(org-level-6 ((t (:font "DejaVu Serif" :weight bold :height 1.1))))
+                          `(org-level-5 ((t (:font "DejaVu Serif" :weight bold :height 1.1))))
+                          `(org-level-4 ((t (:font "DejaVu Serif" :weight bold :height 1.1))))
+                          `(org-level-3 ((t (:font "DejaVu Serif" :weight bold :height 1.25))))
+                          `(org-level-2 ((t (:font "DejaVu Serif" :weight bold :height 1.5))))
+                          `(org-level-1 ((t (:font "DejaVu Serif" :weight bold :height 1.75 :underline t))))
+                          `(org-document-title ((t (:font "DejaVu Serif" :weight bold :height 1.5)))))
 #+END_SRC
 
 ** f90 mode
