@@ -92,17 +92,32 @@
 
 ** Fortran-mode
 
-* Helm
-
 * Packages
+** Helm
+#+BEGIN_SRC emacs-lisp
+    (use-package
+       :ensure t
+       :bind-keymap
+       :init
+       :config
+       (require 'helm-config)
+       )
+#+END_SRC
+
 ** yasnippet
-  #+BEGIN_SRC emacs-lisp
-    (require 'yasnippet)
+#+BEGIN_SRC emacs-lisp
+  (use-package yasnippet
+    :ensure t
+    :bind-keymap
+    ;; ("SPC" . yas-maybe-expand)
+    :init
     (yas-global-mode 1)
+    :config
     (setq yas-snippet-dirs '("~/.emacs.d/snippets"))
     (setq yas-indent-line 'fixed)
     (define-key yas-minor-mode-map (kbd "SPC") yas-maybe-expand)
-  #+END_SRC
+    )
+#+END_SRC
 
 ** simpleclip
 #+BEGIN_SRC emacs-lisp

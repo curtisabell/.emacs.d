@@ -1,0 +1,12 @@
+*
+!.gitignore
+!snippets/
+!snippets/*
+!snippets/*/
+!snippets/*/*
+!Code/
+!Code/sensible-defaults.el
+!themes/
+!themes/*
+!init.el
+!settings.org
