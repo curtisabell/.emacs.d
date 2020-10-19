@@ -164,7 +164,6 @@ Abbreviate all 'Yes/No' prompts to 'y/n'
 (use-package lsp-mode
   :ensure t
   :commands lsp
-  :hook ((python-mode) . lsp)
 )
 #+end_src
 
@@ -178,6 +177,7 @@ Abbreviate all 'Yes/No' prompts to 'y/n'
   (turn-on-font-lock)                   ; syntax highlighting
   (auto-fill-mode 0)                    ; turn off auto-filling
   (flyspell-prog-mode)
+  (lsp 1)
   ;; (local-set-key (kbd "H-t") 'abell/f90-comment-header)
   (local-set-key (kbd "H-M-h") 'abell/f90-comment-header-block)
   (local-set-key (kbd "H-w") 'abell/insert-f90-write)
@@ -192,6 +192,7 @@ Abbreviate all 'Yes/No' prompts to 'y/n'
 #+begin_src emacs-lisp
 (defun abell/python-mode-hook ()
   (setq electric-pair-mode t)
+  (lsp 1)
   )
 (add-hook 'python-mode-hook 'abell/python-mode-hook)
 #+end_src
@@ -200,6 +201,7 @@ Abbreviate all 'Yes/No' prompts to 'y/n'
 #+begin_src emacs-lisp
 (defun abell/cpp-mode-hook ()
   (setq electric-pair-mode t)
+  (lsp 1)
   )
 (add-hook 'c++-mode-hook 'abell/cpp-mode-hook)
 #+end_src
