@@ -5,17 +5,15 @@
 (setq package-archives
       '(("gnu" . "https://elpa.gnu.org/packages/")
         ("MELPA" . "https://melpa.org/packages/")
-	   ("org" . "https://orgmode.org/elpa/")
-	   )
+	("org" . "https://orgmode.org/elpa/"))
       package-archive-priorities
       '(("MELPA" . 5)
         ("gnu" . 1)
-	   ("org" . 0)
-	   )
-	 )
+	("org" . 0))
+      )
 (require 'use-package)
 
-;; Load emacs configurations using babel
+;; ---------------Load emacs configurations using babel--------------
 (require 'org)
 (org-babel-load-file
  (expand-file-name "settings.org"
