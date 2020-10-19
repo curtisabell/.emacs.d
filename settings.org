@@ -504,12 +504,12 @@ Adds icons to Company
 
 *** Company-LSP
 #+begin_src emacs-lisp
-;; (use-package company-lsp
-;;   :ensure t
-;;   :config
-;;   (setq company-lsp-enable-snippet t)
-;;   (push `company-lsp company-backends)
-;;   )
+(use-package company-lsp
+  :ensure t
+  :config
+  (setq company-lsp-enable-snippet t)
+  (push `company-lsp company-backends)
+  )
 #+end_src
 
 * Misc Functions
