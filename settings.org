@@ -1,161 +1,152 @@
 * Theme settings
-  #+BEGIN_SRC emacs-lisp
-    (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
-    (when (display-graphic-p) (load-theme 'abell-dark t))
-  #+END_SRC
+  #+begin_src emacs-lisp
+  (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
+  (when (display-graphic-p) (load-theme 'abell-dark t))
+  #+end_src
 
 * Package installation
 
 * Emacs General Configuration
 ** Sensible defaults
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
      (load-file "~/.emacs.d/Code/sensible-defaults.el")
      (sensible-defaults/use-all-settings)
      (sensible-defaults/use-all-keybindings)
      (sensible-defaults/backup-to-temp-directory)
- #+END_SRC
+ #+end_src
 
 ** GUI-specific
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
   (when (display-graphic-p)
     (add-to-list 'default-frame-alist '(fullscreen . maximized))
     (global-linum-mode t)
     )
-#+END_SRC
+#+end_src
 
 ** Other Configurations
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
   (set-language-environment "UTF-8")
   (set-default-coding-systems 'utf-8)
-#+END_SRC
+#+end_src
 
 Tab inserts spaces
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq-default indent-tabs-mode 0)
-#+END_SRC
+#+end_src
 
 Delete selection upon backspacing or typing.
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (delete-selection-mode 0)
-#+END_SRC
+#+end_src
 
 Don't show menu or scroll bar
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (tool-bar-mode 0)
 (menu-bar-mode 0)
 (when window-system
   (scroll-bar-mode -1))
-#+END_SRC
+#+end_src
 
 Emacs has a silly warning bell by default. This gets rid of it.
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq ring-bell-function 'ignore)
-#+END_SRC
+#+end_src
 
 Fix Emacs' mouse scrolling behaviour
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq scroll-conservatively 100) ;; When cursor moves outside window, don't jump erratically
 (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
 (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
 ;; (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
-#+END_SRC
+#+end_src
 
 Highlight the current line in GUI
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 ;; (when window-system
 ;;   (global-hl-line-mode))
-#+END_SRC
+#+end_src
 
 Enable disabled commands
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (put 'narrow-to-region 'disabled nil)
-#+END_SRC
-
-Avoid truncation of emacs term (default 2048)
-#+BEGIN_SRC emacs-lisp
-(setq 'term-buffer-maximum-size 0)
-#+END_SRC
+#+end_src
 
 Fix startup behaviour. Don't show startup screen, replace with dashboard.
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq inhibit-startup-screen t)
-#+END_SRC
+#+end_src
 
 Settings changed through Emacs interface are stored in separate file
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file :noerror)
-#+END_SRC
+#+end_src
 
 CamelCase recognition
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (global-subword-mode)
-#+END_SRC
+#+end_src
 
 Global tab width
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq tab-width 5)
-#+END_SRC
+#+end_src
 
 Display time in mode line
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq display-time-string-forms
         '((propertize (format-time-string " %b %d, %l:%M%P" now) 'face 'bold)))
 (setq display-time-and-date t)
 (display-time-mode 1)
-#+END_SRC
+#+end_src
 
 Abbreviate all 'Yes/No' prompts to 'y/n'
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (fset 'yes-or-no-p 'y-or-n-p)
-#+END_SRC
-
-Set default browser to Firefox
-#+BEGIN_SRC emacs-lisp
-(setenv "BROWSER" "firefox")t
-#+END_SRC
+#+end_src
 
 * Major modes
 ** Org
-#+BEGIN_SRC emacs-lisp
-  (require 'org)
-     (autoload 'org-mode "org" "Org Mode" t)
-    (defun my-org-mode-hook ()
-      (setq org-log-done t)
-      (define-key global-map "\C-cl" 'org-store-link)
-      (define-key global-map "\C-ca" 'org-agenda)
-      (visual-line-mode 1)
-      (org-indent-mode 1)
-      (abbrev-mode 1)
-      (org-bullets-mode 1)
-      (setq org-src-fontify-natively t
-            org-src-tab-acts-natively t
-            org-confirm-babel-evaluate nil
-            org-edit-src-content-indentation 0)
-      (setq org-hide-emphasis-markers t)
-      )
-    (add-hook 'org-mode-hook 'my-org-mode-hook)
-#+END_SRC
+#+begin_src emacs-lisp
+(require 'org)
+   (autoload 'org-mode "org" "Org Mode" t)
+(defun my-org-mode-hook ()
+    (setq org-log-done t)
+    (define-key global-map "\C-cl" 'org-store-link)
+    (define-key global-map "\C-ca" 'org-agenda)
+    (visual-line-mode 1)
+    (org-indent-mode 1)
+    (abbrev-mode 1)
+    (org-bullets-mode 1)
+    (flyspell-mode 1)
+    (setq org-src-fontify-natively t
+          org-src-tab-acts-natively t
+          org-confirm-babel-evahhluate nil
+          org-edit-src-content-indentation 0)
+    (setq org-hide-emphasis-markers t)
+    )
+  (add-hook 'org-mode-hook 'my-org-mode-hook)
+#+end_src
 
 *** Change dashes to bullets in lists
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
   (font-lock-add-keywords 'org-mode
                           '(("^ +\\([-*]\\) "
                              (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
-#+END_SRC
+#+end_src
 
 *** org-bullets mode
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
   (use-package org-bullets
     :ensure org
     :init
     (org-bullets-mode 1)
     :config
     )
-#+END_SRC
+#+end_src
 
 *** Org header customisation
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
   (custom-theme-set-faces 'user
                           `(org-level-8 ((t (:font "DejaVu Sans" :weight bold :height 1.1 :foreground "slate grey"))))
                           `(org-level-7 ((t (:font "DejaVu Sans" :weight bold :height 1.1 :foreground "violet red"))))
@@ -166,52 +157,61 @@ Set default browser to Firefox
                           `(org-level-2 ((t (:font "DejaVu Sans" :weight bold :height 1.35 :foreground "goldenrod"))))
                           `(org-level-1 ((t (:font "DejaVu Sans" :weight bold :height 1.5 :underline t :foreground "Forest Green"))))
                           `(org-document-title ((t (:font "DejaVu Sans" :weight bold :height 1.75)))))
-#+END_SRC
+#+end_src
 
 ** LSP
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package lsp-mode
   :ensure t
   :commands lsp
   :hook ((python-mode) . lsp)
 )
-#+END_SRC
+#+end_src
 
 ** Fortran 90
-#+BEGIN_SRC emacs-lisp
-  (defun my-f90-mode-hook ()
-    (setq f90-font-lock-keywords f90-font-lock-keywords-3)
-    '(f90-comment-region "!!!$")
-    '(f90-indented-comment-re "!")
-    (abbrev-mode 1)                       ; turn on abbreviation mode
-    (turn-on-font-lock)                   ; syntax highlighting
-    (auto-fill-mode 0)                    ; turn off auto-filling
-    ;; (local-set-key (kbd "H-t") 'abell/f90-comment-header)
-    (local-set-key (kbd "H-M-h") 'abell/f90-comment-header-block)
-    (local-set-key (kbd "H-w") 'abell/insert-f90-write)
-    (local-set-key (kbd "C-H-w") 'abell/insert-f90-write)
-    ;; (local-set-key (kbd "H-p") 'abell/insert-f90-print)
-    (local-set-key (kbd "H-p") 'abell/insert-double-precision)
-    )
-  (add-hook 'f90-mode-hook 'my-f90-mode-hook)
-#+END_SRC
+#+begin_src emacs-lisp
+(defun my-f90-mode-hook ()
+  (setq f90-font-lock-keywords f90-font-lock-keywords-3)
+  '(f90-comment-region "!!!$")
+  '(f90-indented-comment-re "!")
+  (abbrev-mode 1)                       ; turn on abbreviation mode
+  (turn-on-font-lock)                   ; syntax highlighting
+  (auto-fill-mode 0)                    ; turn off auto-filling
+  (flyspell-prog-mode)
+  ;; (local-set-key (kbd "H-t") 'abell/f90-comment-header)
+  (local-set-key (kbd "H-M-h") 'abell/f90-comment-header-block)
+  (local-set-key (kbd "H-w") 'abell/insert-f90-write)
+  (local-set-key (kbd "C-H-w") 'abell/insert-f90-write)
+  ;; (local-set-key (kbd "H-p") 'abell/insert-f90-print)
+  (local-set-key (kbd "H-p") 'abell/insert-double-precision)
+  )
+(add-hook 'f90-mode-hook 'my-f90-mode-hook)
+#+end_src
 
 ** Python
-#+BEGIN_SRC emacs-lisp
-  (defun abell/python-mode-hook ()
-    (setq electric-pair-mode t)
-    )
-  (add-hook 'python-mode-hook 'abell/python-mode-hook)
-#+END_SRC
+#+begin_src emacs-lisp
+(defun abell/python-mode-hook ()
+  (setq electric-pair-mode t)
+  )
+(add-hook 'python-mode-hook 'abell/python-mode-hook)
+#+end_src
+
+** C++
+#+begin_src emacs-lisp
+(defun abell/cpp-mode-hook ()
+  (setq electric-pair-mode t)
+  )
+(add-hook 'c++-mode-hook 'abell/cpp-mode-hook)
+#+end_src
 
 ** Emacs-Lisp
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
   (define-key emacs-lisp-mode-map (kbd "C-c C-a") 'eval-buffer)
   (define-key emacs-lisp-mode-map (kbd "C-c C-r") 'eval-region)
-#+END_SRC
+#+end_src
 
 ** TeX
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
   (defun TeX-inline-math-abell()
     (interactive)
     (insert "\\(  \\)")
@@ -245,9 +245,9 @@ Set default browser to Firefox
     (insert "\\left\\{  \\right\\}")
     (backward-char 9)
     )
-#+END_SRC
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (require 'tex)
 (defun my-LaTeX-mode-hook ()
   (setq TeX-auto-save t)
@@ -275,11 +275,11 @@ Set default browser to Firefox
   (local-set-key (kbd "H-a") '(lambda () (interactive) (save-buffer) (TeX-command-run-all)))
   )
 (add-hook 'LaTeX-mode-hook 'my-LaTeX-mode-hook)
-#+END_SRC
+#+end_src
 
 * Packages
 ** Helm
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
   (use-package helm
     :ensure t
     :bind-keymap
@@ -293,10 +293,10 @@ Set default browser to Firefox
     (global-set-key (kbd "C-x b") 'helm-mini)
     (setq helm-ff-skip-boring-files t)
     )
-#+END_SRC
+#+end_src
 
 *** helm-spotify-plus
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
   (use-package helm-spotify-plus
     :ensure helm
     :bind-keymap
@@ -304,384 +304,405 @@ Set default browser to Firefox
     ("H-s H-p" . helm-spotify-plus-previous)
     ("H-s H-SPC" . helm-spotify-plus-toggle-play-pause)
     )
-#+END_SRC
+#+end_src
 
 ** Linum
-#+BEGIN_SRC emacs-lisp
-  (require 'linum)
-  (setq linum-disabled-modes-list '(eshell-mode wl-summary-mode
-       compilation-mode text-mode dired-mode pdf-view-mode
-       doc-view-mode shell-mode pdf-view-mode image-mode
-       term-mode))
-#+END_SRC
+#+begin_src emacs-lisp
+(require 'linum)
+(setq linum-disabled-modes-list '(eshell-mode wl-summary-mode
+					      compilation-mode text-mode dired-mode pdf-view-mode
+					      doc-view-mode shell-mode pdf-view-mode image-mode
+					      term-mode)
+)
+#+end_src
 
 ** Projectile
-#+BEGIN_SRC emacs-lisp
-  (use-package projectile
-    :ensure t
-    :bind-keymap
-    ("C-c p" . projectile-command-map)
-    :init
-    :config
-    )
-#+END_SRC
+#+begin_src emacs-lisp
+(use-package projectile
+  :ensure t
+  :bind-keymap
+  ("C-c p" . projectile-command-map)
+  :init
+  :config
+  )
+#+end_src
 
 *** helm-projectile
-#+BEGIN_SRC emacs-lisp
-  (use-package helm-projectile
-    :ensure t
-    :init
-    (helm-projectile-on)
-    :config
-    )
-#+END_SRC
+#+begin_src emacs-lisp
+(use-package helm-projectile
+  :ensure t
+  :init
+  (helm-projectile-on)
+  :config
+  )
+#+end_src
 
 ** Spaceline
-#+BEGIN_SRC emacs-lisp
-  (use-package spaceline
-    :ensure t
-    :config
-    (setq-default mode-line-format '("%e" (:eval (spaceline-ml-main)))))
-#+END_SRC
+#+begin_src emacs-lisp
+(use-package spaceline
+  :ensure t
+  :config
+  (setq-default mode-line-format '("%e" (:eval (spaceline-ml-main))))
+)
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
-  (use-package spaceline-config
-    :ensure spaceline
-    :config
-    (spaceline-helm-mode 1)
-    (spaceline-install
-     'main
-     '((buffer-modified)
-       ((remote-host buffer-id) :face highlight-face)
-       (process :when active))
-     '((selection-info :face 'region :when mark-active)
-       ((flycheck-error flycheck-warning flycheck-info) :when active)
-       (which-function)
-       (version-control :when active)
-       (line-column)
-       (global :when active)
-       (major-mode)))
-    )
-#+END_SRC
+#+begin_src emacs-lisp
+(use-package spaceline-config
+  :ensure spaceline
+  :config
+  (spaceline-helm-mode 1)
+  (spaceline-install
+   'main
+   '((buffer-modified)
+     ((remote-host buffer-id) :face highlight-face)
+     (process :when active))
+   '((selection-info :face 'region :when mark-active)
+     ((flycheck-error flycheck-warning flycheck-info) :when active)
+     (which-function)
+     (version-control :when active)
+     (line-column)
+     (global :when active)
+     (major-mode)))
+  )
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
-  (setq-default
-   powerline-height 24
-   powerline-default-separator 'wave
-   spaceline-flycheck-bullet "❖ %s"
-   spaceline-separator-dir-left '(right . right)
-   spaceline-separator-dir-right '(left . left)
-   )
-#+END_SRC
+#+begin_src emacs-lisp
+(setq-default
+ powerline-height 24
+ powerline-default-separator 'wave
+ spaceline-flycheck-bullet "❖ %s"
+ spaceline-separator-dir-left '(right . right)
+ spaceline-separator-dir-right '(left . left)
+ )
+#+end_src
 
 ** Ace Window
-#+BEGIN_SRC emacs-lisp
-  (use-package ace-window
-    :ensure t
-    :bind-keymap
-    ("H-o" . ace-select-window)
-    ("H-1" . ace-switch-1)
-    ("H-2" . ace-switch-2)
-    ("H-3" . ace-switch-3)
-    ("H-4" . ace-switch-4)
-    :init
-    :config
-    (fset 'ace-switch-1
-          [?\H-o ?1])
-    (fset 'ace-switch-2
-          [?\H-o ?2])
-    (fset 'ace-switch-3
-          [?\H-o ?3])
-    (fset 'ace-switch-4
-          [?\H-o ?4])
+#+begin_src emacs-lisp
+(use-package ace-window
+  :ensure t
+  :bind-keymap
+  ("H-o" . ace-select-window)
+  ("H-1" . ace-switch-1)
+  ("H-2" . ace-switch-2)
+  ("H-3" . ace-switch-3)
+  ("H-4" . ace-switch-4)
+  :init
+  :config
+  (fset 'ace-switch-1
+        [?\H-o ?1])
+  (fset 'ace-switch-2
+        [?\H-o ?2])
+  (fset 'ace-switch-3
+        [?\H-o ?3])
+  (fset 'ace-switch-4
+        [?\H-o ?4])
 
-    )
-#+END_SRC
+  )
+#+end_src
 
 ** Yasnippet
-#+BEGIN_SRC emacs-lisp
-  (use-package yasnippet
-    :ensure t
-    :init
-    (yas-global-mode 1)
-    :config
-    (setq yas-snippet-dirs '("~/.emacs.d/snippets"))
-    (setq yas-indent-line 'fixed)
-    (define-key yas-minor-mode-map (kbd "SPC") yas-maybe-expand)
-    )
-#+END_SRC
+#+begin_src emacs-lisp
+(use-package yasnippet
+  :ensure t
+  :init
+  (yas-global-mode 1)
+  :config
+  (setq yas-snippet-dirs '("~/.emacs.d/snippets"))
+  (setq yas-indent-line 'fixed)
+  (define-key yas-minor-mode-map (kbd "SPC") yas-maybe-expand)
+  )
+#+end_src
 
 ** Simpleclip
-#+BEGIN_SRC emacs-lisp
-  (use-package simpleclip
-    :ensure t
-    :init
-    (simpleclip-mode 1)
-    :config
-    (global-set-key (kbd "H-x") 'simpleclip-cut)
-    (global-set-key (kbd "H-c") 'simpleclip-copy)
-    (global-set-key (kbd "H-v") 'simpleclip-paste)
-    )
-#+END_SRC
+#+begin_src emacs-lisp
+(use-package simpleclip
+  :ensure t
+  :init
+  (simpleclip-mode 1)
+  :config
+  (global-set-key (kbd "H-x") 'simpleclip-cut)
+  (global-set-key (kbd "H-c") 'simpleclip-copy)
+  (global-set-key (kbd "H-v") 'simpleclip-paste)
+  )
+#+end_src
 
 ** PDF tools
-#+BEGIN_SRC emacs-lisp
-  (use-package pdf-tools
-    :ensure t
-    )
-#+END_SRC
+#+begin_src emacs-lisp
+(use-package pdf-tools
+  :ensure t
+  )
+#+end_src
 
 Make =pdf-tools-install= only run the first time a pdf is opened.
-#+BEGIN_SRC emacs-lisp
-    ;; (pdf-tools-install)
-  (add-to-list 'auto-mode-alist '("\\.pdf\\'" . pdf-tools-install))
-  (add-hook 'pdf-view-mode-hook
-            (lambda () (setq header-line-format nil)))
-#+END_SRC
+#+begin_src emacs-lisp
+;; (pdf-tools-install)
+(add-to-list 'auto-mode-alist '("\\.pdf\\'" . pdf-tools-install))
+(add-hook 'pdf-view-mode-hook
+          (lambda () (setq header-line-format nil)))
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
-  (add-to-list 'auto-mode-alist '("\\.pdf\\'" . pdf-view-mode))
-  ;; make midnight mode colours nice
-  (setq pdf-view-midnight-colors (cons (face-foreground 'default) (face-background 'default)))
-  (defun my-pdf-view-mode-hook ()
-    (pdf-view-midnight-minor-mode 1)
-    (linum-mode 0)
-    )
-  (add-hook 'pdf-view-mode-hook 'my-pdf-view-mode-hook)
-#+END_SRC
+#+begin_src emacs-lisp
+(add-to-list 'auto-mode-alist '("\\.pdf\\'" . pdf-view-mode))
+;; make midnight mode colours nice
+(setq pdf-view-midnight-colors (cons (face-foreground 'default) (face-background 'default)))
+(defun my-pdf-view-mode-hook ()
+  (pdf-view-midnight-minor-mode 1)
+  (linum-mode 0)
+  )
+(add-hook 'pdf-view-mode-hook 'my-pdf-view-mode-hook)
+#+end_src
 
 Configuration to use pdf-view-mode with latex.
-#+BEGIN_SRC emacs-lisp
-  (setq TeX-view-program-selection '((output-pdf "PDF Tools"))
-        TeX-view-program-list '(("PDF Tools" TeX-pdf-tools-sync-view))
-        TeX-source-correlate-start-server t) ;; not sure if last line is neccessary
+#+begin_src emacs-lisp
+(setq TeX-view-program-selection '((output-pdf "PDF Tools"))
+      TeX-view-program-list '(("PDF Tools" TeX-pdf-tools-sync-view))
+      TeX-source-correlate-start-server t) ;; not sure if last line is neccessary
 
-  ;; to have the buffer refresh after compilation
-  (add-hook 'TeX-after-compilation-finished-functions
-            #'TeX-revert-document-buffer)
-#+END_SRC
+;; to have the buffer refresh after compilation
+(add-hook 'TeX-after-compilation-finished-functions
+          #'TeX-revert-document-buffer)
+#+end_src
 
 ** Flyspell
+#+begin_src emacs-lisp
+(use-package flyspell
+  :ensure t
+)
+#+end_src
+
 Enable flyspell for all text-modes.
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'text-mode-hook 'turn-on-flyspell)
-#+END_SRC
+#+begin_src emacs-lisp
+;; (add-hook 'text-mode-hook 'turn-on-flyspell)
+#+end_src
 
 Enable flyspell for comments and strings in programming languages.
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'prog-mode-hook 'flyspell-prog-mode)
-#+END_SRC
+#+begin_src emacs-lisp
+(add-hook 'prog-mode-hook 'flyspell-prog-mode)
+#+end_src
 
 ** Company
-#+BEGIN_SRC emacs-lisp
-  (use-package company
-    :ensure t
-    :config
-    (setq company-idle-delay 0)
-    (setq company-minimum-prefix-length 2)
+#+begin_src emacs-lisp
+(use-package company
+  :ensure t
+  :config
+  (setq company-idle-delay 0)
+  (setq company-minimum-prefix-length 3)
 
-    (global-company-mode t)
-    )
-#+END_SRC
+  (global-company-mode t)
+  )
+#+end_src
+
+*** Company-box
+Adds icons to Company
+#+begin_src emacs-lisp
+(use-package company-box
+  :ensure t
+  :hook (company-mode . company-box-mode)
+)
+#+end_src
 
 *** Company-LSP
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package company-lsp
   :ensure t
   :config
   (setq company-lsp-enable-snippet t)
   (push `company-lsp company-backends)
   )
-#+END_SRC
+#+end_src
 
 * Misc Functions
 ** Yank to a newline
-#+BEGIN_SRC emacs-lisp
-  (defun abell/newline-yank ()
-    (interactive)
-    (newline)
-    (yank)
-    )
-  (global-set-key (kbd "<C-return>") 'abell/newline-yank)
-#+END_SRC
+#+begin_src emacs-lisp
+(defun abell/newline-yank ()
+  (interactive)
+  (newline)
+  (yank)
+  )
+(global-set-key (kbd "<C-return>") 'abell/newline-yank)
+#+end_src
 
 ** Display current buffer filename
-#+BEGIN_SRC emacs-lisp
-  (defun abell/view-buffer-name ()
-    "Display the filename of the current buffer."
-    (interactive)
-    (message (buffer-file-name)))
-  (global-set-key (kbd "H-b") 'abell/view-buffer-name)
-#+END_SRC
+#+begin_src emacs-lisp
+(defun abell/view-buffer-name ()
+  "Display the filename of the current buffer."
+  (interactive)
+  (message (buffer-file-name)))
+(global-set-key (kbd "H-b") 'abell/view-buffer-name)
+#+end_src
 
 ** Swapping lines being commented above and below
-#+BEGIN_SRC emacs-lisp
-  (defun abell/comment-swap-above ()
-    "Comments out the current line, and uncomments the line above"
-    (interactive)
-    (sensible-defaults/comment-or-uncomment-region-or-line)
-    (previous-line)
-    (sensible-defaults/comment-or-uncomment-region-or-line)
-    )
-  (global-set-key (kbd "H-M-<up>") 'abell/comment-swap-above)
+#+begin_src emacs-lisp
+(defun abell/comment-swap-above ()
+  "Comments out the current line, and uncomments the line above"
+  (interactive)
+  (sensible-defaults/comment-or-uncomment-region-or-line)
+  (previous-line)
+  (sensible-defaults/comment-or-uncomment-region-or-line)
+  )
+(global-set-key (kbd "H-M-<up>") 'abell/comment-swap-above)
 
-  (defun abell/comment-swap-below ()
-    "Comments out the current line, and uncomments the line below"
-    (interactive)
-    (sensible-defaults/comment-or-uncomment-region-or-line)
-    (next-line)
-    (sensible-defaults/comment-or-uncomment-region-or-line)
-    )
-  (global-set-key (kbd "H-M-<down>") 'abell/comment-swap-below)
-#+END_SRC
+(defun abell/comment-swap-below ()
+  "Comments out the current line, and uncomments the line below"
+  (interactive)
+  (sensible-defaults/comment-or-uncomment-region-or-line)
+  (next-line)
+  (sensible-defaults/comment-or-uncomment-region-or-line)
+  )
+(global-set-key (kbd "H-M-<down>") 'abell/comment-swap-below)
+#+end_src
 
 ** Insert a comment header in each language
-#+BEGIN_SRC emacs-lisp
-  (defun abell/general-comment-header (title)
-    "Inserts a commented title"
-    (interactive "sEnter a title: ")
-    (defvar dash-len 1)
-    (setq dash-len (/ (- 66 (length title)) 2))
-    (dotimes (ii dash-len)
-      (insert "-"))
-    (if (= (mod (length title) 2) 1)
-        (insert "-")
-      )
-    (insert title)
-    (dotimes (ii dash-len)
-      (insert "-"))
-    (sensible-defaults/comment-or-uncomment-region-or-line)
-    (indent-for-tab-command)
+#+begin_src emacs-lisp
+(defun abell/general-comment-header (title)
+  "Inserts a commented title"
+  (interactive "sEnter a title: ")
+  (defvar dash-len 1)
+  (setq dash-len (/ (- 66 (length title)) 2))
+  (dotimes (ii dash-len)
+    (insert "-"))
+  (if (= (mod (length title) 2) 1)
+      (insert "-")
     )
-  (global-set-key (kbd "H-h") 'abell/general-comment-header)
-#+END_SRC
+  (insert title)
+  (dotimes (ii dash-len)
+    (insert "-"))
+  (sensible-defaults/comment-or-uncomment-region-or-line)
+  (indent-for-tab-command)
+  )
+(global-set-key (kbd "H-h") 'abell/general-comment-header)
+#+end_src
 
 ** Change between vertical and horizontal windows splitting
-#+BEGIN_SRC emacs-lisp
-  (defun my/window-split-toggle ()
-    "Toggle between horizontal and vertical split with two windows."
-    (interactive)
-    (if (> (length (window-list)) 2)
-        (error "Can't toggle with more than 2 windows!")
-      (let ((func (if (window-full-height-p)
-                      #'split-window-vertically
-                    #'split-window-horizontally)))
-        (delete-other-windows)
-        (funcall func)
-        (save-selected-window
-          (other-window 1)
-          (switch-to-buffer (other-buffer))))))
-  (global-set-key (kbd "H-f") 'my/window-split-toggle)
-#+END_SRC
+#+begin_src emacs-lisp
+(defun my/window-split-toggle ()
+  "Toggle between horizontal and vertical split with two windows."
+  (interactive)
+  (if (> (length (window-list)) 2)
+      (error "Can't toggle with more than 2 windows!")
+    (let ((func (if (window-full-height-p)
+                    #'split-window-vertically
+                  #'split-window-horizontally)))
+      (delete-other-windows)
+      (funcall func)
+      (save-selected-window
+        (other-window 1)
+        (switch-to-buffer (other-buffer))))
+)
+(global-set-key (kbd "H-f") 'my/window-split-toggle)
+#+end_src
 
 ** Quick access to this file
-#+BEGIN_SRC emacs-lisp
-  (defun abell/visit-emacs-config ()
-    (interactive)
-    (find-file "~/.emacs.d/settings.org"))
-  (global-set-key (kbd "C-c e") 'abell/visit-emacs-config)
+#+begin_src emacs-lisp
+(defun abell/visit-emacs-config ()
+  (interactive)
+  (find-file "~/.emacs.d/settings.org"))
+(global-set-key (kbd "C-c e") 'abell/visit-emacs-config)
 
-  (defun abell/visit-emacs-config-other-window ()
-    (interactive)
-    (find-file-other-window "~/.emacs.d/settings.org"))
-  (global-set-key (kbd "C-c M-e") 'abell/visit-emacs-config-other-window)
-#+END_SRC
+(defun abell/visit-emacs-config-other-window ()
+  (interactive)
+  (find-file-other-window "~/.emacs.d/settings.org"))
+(global-set-key (kbd "C-c M-e") 'abell/visit-emacs-config-other-window)
+#+end_src
 
 ** Quick access to bashrc
-#+BEGIN_SRC emacs-lisp
-  (defun abell/visit-bashrc ()
-    (interactive)
-    (if (file-exists-p "~/.bash_config")
-        (find-file "~/.bash_config")
-      (find-file "~/.bashrc")
-      )
+#+begin_src emacs-lisp
+(defun abell/visit-bashrc ()
+  (interactive)
+  (if (file-exists-p "~/.bash_config")
+      (find-file "~/.bash_config")
+    (find-file "~/.bashrc")
     )
-  (global-set-key (kbd "C-c b") 'abell/visit-bashrc)
-#+END_SRC
+  )
+(global-set-key (kbd "C-c b") 'abell/visit-bashrc)
+#+end_src
 
 ** Move lines up and down
-#+BEGIN_SRC emacs-lisp
-  (defun abell/move-line-up ()
-    (interactive)
-    (transpose-lines 1)
-    (previous-line 2))
-  (global-set-key (kbd "M-<up>") 'abell/move-line-up)
+#+begin_src emacs-lisp
+(defun abell/move-line-up ()
+  (interactive)
+  (transpose-lines 1)
+  (previous-line 2))
+(global-set-key (kbd "M-<up>") 'abell/move-line-up)
 
-  (defun abell/move-line-down ()
-    (interactive)
-    (forward-line 1)
-    (transpose-lines 1)
-    (previous-line 1))
-  (global-set-key (kbd "M-<down>") 'abell/move-line-down)
-#+END_SRC
+(defun abell/move-line-down ()
+  (interactive)
+  (forward-line 1)
+  (transpose-lines 1)
+  (previous-line 1))
+(global-set-key (kbd "M-<down>") 'abell/move-line-down)
+#+end_src
 
 ** Duplicate current line
-#+BEGIN_SRC emacs-lisp
-  (defun duplicate-current-line-or-region (arg)
-    "Duplicates the current line or region ARG times.
-  If there's no region, the current line will be duplicated. However, if
-  there's a region, all lines that region covers will be duplicated."
-    (interactive "p")
-    (let (beg end (origin (point)))
-      (if (and mark-active (> (point) (mark)))
-          (exchange-point-and-mark))
-      (setq beg (line-beginning-position))
-      (if mark-active
-          (exchange-point-and-mark))
-      (setq end (line-end-position))
-      (let ((region (buffer-substring-no-properties beg end)))
-        (dotimes (i arg)
-          (goto-char end)
-          (newline)
-          (insert region)
-          (setq end (point)))
-        (goto-char (+ origin (* (length region) arg) arg)))))
-  (global-set-key (kbd "H-d") 'duplicate-current-line-or-region)
-#+END_SRC
+#+begin_src emacs-lisp
+(defun duplicate-current-line-or-region (arg)
+  "Duplicates the current line or region ARG times.
+If there's no region, the current line will be duplicated. However, if
+there's a region, all lines that region covers will be duplicated."
+  (interactive "p")
+  (let (beg end (origin (point)))
+    (if (and mark-active (> (point) (mark)))
+        (exchange-point-and-mark))
+    (setq beg (line-beginning-position))
+    (if mark-active
+        (exchange-point-and-mark))
+    (setq end (line-end-position))
+    (let ((region (buffer-substring-no-properties beg end)))
+      (dotimes (i arg)
+        (goto-char end)
+        (newline)
+        (insert region)
+        (setq end (point)))
+      (goto-char (+ origin (* (length region) arg) arg)))
+)
+(global-set-key (kbd "H-d") 'duplicate-current-line-or-region)
+#+end_src
 
 ** Kill buffer and frame
-#+BEGIN_SRC emacs-lisp
-  (defun abell/kill-buffer-and-frame ()
-    (interactive)
-    (kill-this-buffer)
-    (delete-frame))
-  (global-set-key (kbd "C-x 5 k") 'abell/kill-buffer-and-frame)
-#+END_SRC
+#+begin_src emacs-lisp
+(defun abell/kill-buffer-and-frame ()
+  (interactive)
+  (kill-this-buffer)
+  (delete-frame))
+(global-set-key (kbd "C-x 5 k") 'abell/kill-buffer-and-frame)
+#+end_src
 
 ** Run python3 in this buffer
-#+BEGIN_SRC emacs-lisp
-  (defun abell/run-python3 ()
-    (interactive)
-    (let ((buf (ansi-term "/usr/bin/python3")))))
-#+END_SRC
+#+begin_src emacs-lisp
+(defun abell/run-python3 ()
+  (interactive)
+  (let ((buf (ansi-term "/usr/bin/python3"))))
+  )
+#+end_src
 
 ** Open/close terminal in other window
-#+BEGIN_SRC emacs-lisp
-  (defun abell/open-term-other-window ()
-    (interactive)
-    (let ((buf (ansi-term "/bin/bash")))
-      (switch-to-buffer (other-buffer buf))
-      (switch-to-buffer-other-window buf)))
-  (global-set-key (kbd "C-x 4 t") 'abell/open-term-other-window)
-  (defun abell/open-term-other-window-below ()
-        (interactive)
-        (split-window-below -9)
-        (other-window ansi-term)
-        (1 "/bin/bash")
+#+begin_src emacs-lisp
+(defun abell/open-term-other-window ()
+  (interactive)
+  (let ((buf (ansi-term "/bin/bash")))
+    (switch-to-buffer (other-buffer buf))
+    (switch-to-buffer-other-window buf))
+  )
+(global-set-key (kbd "C-x 4 t") 'abell/open-term-other-window)
+(defun abell/open-term-other-window-below ()
+      (interactive)
+      (split-window-below -9)
+      (other-window ansi-term)
+      (1 "/bin/bash")
       )
-  (defun abell/open-term-close-window ()
-    (interactive)
-    (switch-to-buffer-other-window "*terminal*")
-    (kill-buffer-and-window)
-    )
-  (add-hook 'term-exec-hook
-            (lambda () (set-process-query-on-exit-flag (get-buffer-process (current-buffer)) nil)))
-  (global-set-key (kbd "H-t") 'abell/open-term-other-window)
-  (global-set-key (kbd "H-M-t") 'abell/open-term-close-window)
-#+END_SRC
+(defun abell/open-term-close-window ()
+  (interactive)
+  (switch-to-buffer-other-window "*terminal*")
+  (kill-buffer-and-window)
+  )
+(add-hook 'term-exec-hook
+          (lambda () (set-process-query-on-exit-flag (get-buffer-process (current-buffer)) nil)))
+(global-set-key (kbd "H-t") 'abell/open-term-other-window)
+(global-set-key (kbd "H-M-t") 'abell/open-term-close-window)
+#+end_src
 
 * Misc keybindings
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
   (global-set-key (kbd "M-n") 'forward-paragraph)
   (global-set-key (kbd "M-p") 'backward-paragraph)
   (global-set-key (kbd "M-]") 'other-frame)
@@ -691,4 +712,4 @@ Enable flyspell for comments and strings in programming languages.
   (global-set-key (kbd "C-c n") (lambda () (interactive) (insert-char 10008))) ; ✘
   (global-set-key (kbd "H-y") (lambda () (interactive) (insert-char 10004))) ; ✔
   (global-set-key (kbd "C-H-y") (lambda () (interactive) (count-matches "✔" 0 nil t))) ; Count ✔
-#+END_SRC
+#+end_src
