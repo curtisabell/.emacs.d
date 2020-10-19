@@ -81,7 +81,7 @@
 #+END_SRC
 
 * Major modes
-** org mode
+** org
 #+BEGIN_SRC emacs-lisp
   (require 'org)
      (autoload 'org-mode "org" "Org Mode" t)
@@ -133,7 +133,7 @@
                           `(org-document-title ((t (:font "DejaVu Sans" :weight bold :height 1.75)))))
 #+END_SRC
 
-** f90 mode
+** f90
 #+BEGIN_SRC emacs-lisp
   (defun my-f90-mode-hook ()
     (setq f90-font-lock-keywords f90-font-lock-keywords-3)
@@ -152,7 +152,7 @@
   (add-hook 'f90-mode-hook 'my-f90-mode-hook)
 #+END_SRC
 
-** python mode
+** python
 #+BEGIN_SRC emacs-lisp
   (defun abell/python-mode-hook ()
     (setq electric-pair-mode t)
@@ -160,17 +160,24 @@
   (add-hook 'python-mode-hook 'abell/python-mode-hook)
 #+END_SRC
 
-** emacs-lisp mode
+** emacs-lisp
 #+BEGIN_SRC emacs-lisp
   (define-key emacs-lisp-mode-map (kbd "C-c C-a") 'eval-buffer)
   (define-key emacs-lisp-mode-map (kbd "C-c C-r") 'eval-region)
 #+END_SRC
 
-** tex mode
+** tex
 #+BEGIN_SRC emacs-lisp
   (use-package auctex
     :ensure t
     )
+#+END_SRC
+
+** LSP
+#+BEGIN_SRC emacs-lisp
+  ;; (use-package lsp-mode
+  ;;   :ensure t
+  ;; )
 #+END_SRC
 
 * Minor modes
@@ -326,7 +333,17 @@
   (use-package pdf-tools
     :ensure t
     )
+#+END_SRC
 
+Make =pdf-tools-install= only run the first time a pdf is opened.
+#+BEGIN_SRC emacs-lisp
+    ;; (pdf-tools-install)
+  (add-to-list 'auto-mode-alist '("\\.pdf\\'" . pdf-tools-install))
+  (add-hook 'pdf-view-mode-hook
+            (lambda () (setq header-line-format nil)))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
   (add-to-list 'auto-mode-alist '("\\.pdf\\'" . pdf-view-mode))
   ;; make midnight mode colours nice
   (setq pdf-view-midnight-colors (cons (face-foreground 'default) (face-background 'default)))
@@ -335,10 +352,10 @@
     (linum-mode 0)
     )
   (add-hook 'pdf-view-mode-hook 'my-pdf-view-mode-hook)
+#+END_SRC
 
-
-  (pdf-tools-install)
-  ;; to use pdfview with auctex
+Configuration to use pdf-view-mode with latex.
+#+BEGIN_SRC emacs-lisp
   (setq TeX-view-program-selection '((output-pdf "PDF Tools"))
         TeX-view-program-list '(("PDF Tools" TeX-pdf-tools-sync-view))
         TeX-source-correlate-start-server t) ;; not sure if last line is neccessary
@@ -346,6 +363,17 @@
   ;; to have the buffer refresh after compilation
   (add-hook 'TeX-after-compilation-finished-functions
             #'TeX-revert-document-buffer)
+#+END_SRC
+
+** Flyspell
+Enable flyspell for all text-modes.
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'text-mode-hook 'turn-on-flyspell)
+#+END_SRC
+
+Enable flyspell for comments and strings in programming languages.
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'prog-mode-hook 'flyspell-prog-mode)
 #+END_SRC
 
 * Misc Functions
