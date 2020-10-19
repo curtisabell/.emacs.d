@@ -13,6 +13,14 @@
      (sensible-defaults/backup-to-temp-directory)
  #+END_SRC
 
+** GUI-specific
+#+BEGIN_SRC emacs-lisp
+  (when (display-graphic-p)
+    (add-to-list 'default-frame-alist '(fullscreen . maximized))
+    (global-linum-mode t)
+    )
+#+END_SRC
+
 ** Other config
 #+BEGIN_SRC emacs-lisp
   (set-language-environment "UTF-8")
@@ -84,6 +92,7 @@
       (visual-line-mode 1)
       (org-indent-mode 1)
       (abbrev-mode 1)
+      (org-bullets-mode 1)
       (setq org-src-fontify-natively t
             org-src-tab-acts-natively t
             org-confirm-babel-evaluate nil
@@ -103,44 +112,65 @@
 *** org-bullets mode
 #+BEGIN_SRC emacs-lisp
   (use-package org-bullets
-    :ensure t
+    :ensure org
     :init
     (org-bullets-mode 1)
     :config
     )
 #+END_SRC
 
-*** Variable header sizes
+*** Org header customisation
 #+BEGIN_SRC emacs-lisp
   (custom-theme-set-faces 'user
-                          `(org-level-8 ((t (:font "DejaVu Serif" :weight bold :height 1.1))))
-                          `(org-level-7 ((t (:font "DejaVu Serif" :weight bold :height 1.1))))
-                          `(org-level-6 ((t (:font "DejaVu Serif" :weight bold :height 1.1))))
-                          `(org-level-5 ((t (:font "DejaVu Serif" :weight bold :height 1.1))))
-                          `(org-level-4 ((t (:font "DejaVu Serif" :weight bold :height 1.1))))
-                          `(org-level-3 ((t (:font "DejaVu Serif" :weight bold :height 1.25))))
-                          `(org-level-2 ((t (:font "DejaVu Serif" :weight bold :height 1.5))))
-                          `(org-level-1 ((t (:font "DejaVu Serif" :weight bold :height 1.75 :underline t))))
-                          `(org-document-title ((t (:font "DejaVu Serif" :weight bold :height 1.5)))))
+                          `(org-level-8 ((t (:font "DejaVu Sans" :weight bold :height 1.1 :foreground "slate grey"))))
+                          `(org-level-7 ((t (:font "DejaVu Sans" :weight bold :height 1.1 :foreground "violet red"))))
+                          `(org-level-6 ((t (:font "DejaVu Sans" :weight bold :height 1.1 :foreground "steel blue"))))
+                          `(org-level-5 ((t (:font "DejaVu Sans" :weight bold :height 1.1 :foreground "Lime Green"))))
+                          `(org-level-4 ((t (:font "DejaVu Sans" :weight bold :height 1.1 :foreground "OrangeRed"))))
+                          `(org-level-3 ((t (:font "DejaVu Sans" :weight bold :height 1.2 :foreground "cyan"))))
+                          `(org-level-2 ((t (:font "DejaVu Sans" :weight bold :height 1.35 :foreground "goldenrod"))))
+                          `(org-level-1 ((t (:font "DejaVu Sans" :weight bold :height 1.5 :underline t :foreground "Forest Green"))))
+                          `(org-document-title ((t (:font "DejaVu Sans" :weight bold :height 1.75)))))
 #+END_SRC
 
 ** f90 mode
 #+BEGIN_SRC emacs-lisp
-  ;; (defun my-f90-mode-hook ()
-  ;;   (setq f90-font-lock-keywords f90-font-lock-keywords-3)
-  ;;   '(f90-comment-region "!!!$")
-  ;;   '(f90-indented-comment-re "!")
-  ;;   (abbrev-mode 1)                       ; turn on abbreviation mode
-  ;;   (turn-on-font-lock)                   ; syntax highlighting
-  ;;   (auto-fill-mode 0)                    ; turn off auto-filling
-  ;;   ;; (local-set-key (kbd "H-t") 'abell/f90-comment-header)
-  ;;   (local-set-key (kbd "H-M-h") 'abell/f90-comment-header-block)
-  ;;   (local-set-key (kbd "H-w") 'abell/insert-f90-write)
-  ;;   (local-set-key (kbd "C-H-w") 'abell/insert-f90-write)
-  ;;   ;; (local-set-key (kbd "H-p") 'abell/insert-f90-print)
-  ;;   (local-set-key (kbd "H-p") 'abell/insert-double-precision)
-  ;;   )
-  ;; (add-hook 'f90-mode-hook 'my-f90-mode-hook)
+  (defun my-f90-mode-hook ()
+    (setq f90-font-lock-keywords f90-font-lock-keywords-3)
+    '(f90-comment-region "!!!$")
+    '(f90-indented-comment-re "!")
+    (abbrev-mode 1)                       ; turn on abbreviation mode
+    (turn-on-font-lock)                   ; syntax highlighting
+    (auto-fill-mode 0)                    ; turn off auto-filling
+    ;; (local-set-key (kbd "H-t") 'abell/f90-comment-header)
+    (local-set-key (kbd "H-M-h") 'abell/f90-comment-header-block)
+    (local-set-key (kbd "H-w") 'abell/insert-f90-write)
+    (local-set-key (kbd "C-H-w") 'abell/insert-f90-write)
+    ;; (local-set-key (kbd "H-p") 'abell/insert-f90-print)
+    (local-set-key (kbd "H-p") 'abell/insert-double-precision)
+    )
+  (add-hook 'f90-mode-hook 'my-f90-mode-hook)
+#+END_SRC
+
+** python mode
+#+BEGIN_SRC emacs-lisp
+  (defun abell/python-mode-hook ()
+    (setq electric-pair-mode t)
+    )
+  (add-hook 'python-mode-hook 'abell/python-mode-hook)
+#+END_SRC
+
+** emacs-lisp mode
+#+BEGIN_SRC emacs-lisp
+  (define-key emacs-lisp-mode-map (kbd "C-c C-a") 'eval-buffer)
+  (define-key emacs-lisp-mode-map (kbd "C-c C-r") 'eval-region)
+#+END_SRC
+
+** tex mode
+#+BEGIN_SRC emacs-lisp
+  (use-package auctex
+    :ensure t
+    )
 #+END_SRC
 
 * Minor modes
@@ -291,6 +321,32 @@
     )
 #+END_SRC
 
+** PDF tools
+#+BEGIN_SRC emacs-lisp
+  (use-package pdf-tools
+    :ensure t
+    )
+
+  (add-to-list 'auto-mode-alist '("\\.pdf\\'" . pdf-view-mode))
+  ;; make midnight mode colours nice
+  (setq pdf-view-midnight-colors (cons (face-foreground 'default) (face-background 'default)))
+  (defun my-pdf-view-mode-hook ()
+    (pdf-view-midnight-minor-mode 1)
+    (linum-mode 0)
+    )
+  (add-hook 'pdf-view-mode-hook 'my-pdf-view-mode-hook)
+
+
+  (pdf-tools-install)
+  ;; to use pdfview with auctex
+  (setq TeX-view-program-selection '((output-pdf "PDF Tools"))
+        TeX-view-program-list '(("PDF Tools" TeX-pdf-tools-sync-view))
+        TeX-source-correlate-start-server t) ;; not sure if last line is neccessary
+
+  ;; to have the buffer refresh after compilation
+  (add-hook 'TeX-after-compilation-finished-functions
+            #'TeX-revert-document-buffer)
+#+END_SRC
 
 * Misc Functions
 ** Yank to a newline
@@ -477,7 +533,6 @@
   (global-set-key (kbd "H-t") 'abell/open-term-other-window)
   (global-set-key (kbd "H-M-t") 'abell/open-term-close-window)
 #+END_SRC
-
 
 * Misc keybindings
 #+BEGIN_SRC emacs-lisp
