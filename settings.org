@@ -4,6 +4,8 @@
     (when (display-graphic-p) (load-theme 'abell-dark t))
   #+END_SRC
 
+* Package installation
+
 * Emacs General Configuration
 ** Sensible defaults
    #+BEGIN_SRC emacs-lisp
@@ -21,67 +23,100 @@
     )
 #+END_SRC
 
-** Other config
+** Other Configurations
 #+BEGIN_SRC emacs-lisp
   (set-language-environment "UTF-8")
   (set-default-coding-systems 'utf-8)
+#+END_SRC
 
-  ;; Tab inserts spaces
-  (setq-default indent-tabs-mode 0)
+Tab inserts spaces
+#+BEGIN_SRC emacs-lisp
+(setq-default indent-tabs-mode 0)
+#+END_SRC
 
-  ;; Delete selection upon backspacing or typing.
-  (delete-selection-mode 0)
+Delete selection upon backspacing or typing.
+#+BEGIN_SRC emacs-lisp
+(delete-selection-mode 0)
+#+END_SRC
 
-  ;; Don't show menu or scroll bar
-  (tool-bar-mode 0)
-  (menu-bar-mode 0)
-  (when window-system
-    (scroll-bar-mode -1))
+Don't show menu or scroll bar
+#+BEGIN_SRC emacs-lisp
+(tool-bar-mode 0)
+(menu-bar-mode 0)
+(when window-system
+  (scroll-bar-mode -1))
+#+END_SRC
 
-  ;; Emacs has a silly warning bell by default. This gets rid of it.
-  (setq ring-bell-function 'ignore)
+Emacs has a silly warning bell by default. This gets rid of it.
+#+BEGIN_SRC emacs-lisp
+(setq ring-bell-function 'ignore)
+#+END_SRC
 
-  ;; Fix Emacs' mouse scrolling behaviour
-  (setq scroll-conservatively 100) ;; When cursor moves outside window, don't jump erratically
-  (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
-  (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
-  ;; (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
+Fix Emacs' mouse scrolling behaviour
+#+BEGIN_SRC emacs-lisp
+(setq scroll-conservatively 100) ;; When cursor moves outside window, don't jump erratically
+(setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
+(setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
+;; (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
+#+END_SRC
 
-  ;; Highlight the current line in GUI
-  ;; (when window-system
-  ;;   (global-hl-line-mode))
+Highlight the current line in GUI
+#+BEGIN_SRC emacs-lisp
+;; (when window-system
+;;   (global-hl-line-mode))
+#+END_SRC
 
-  ;; Enable disabled commands
-  (put 'narrow-to-region 'disabled nil)
+Enable disabled commands
+#+BEGIN_SRC emacs-lisp
+(put 'narrow-to-region 'disabled nil)
+#+END_SRC
 
-  ;; Avoid truncation of emacs term (default 2048)
-  ;; (setq 'term-buffer-maximum-size 0)
+Avoid truncation of emacs term (default 2048)
+#+BEGIN_SRC emacs-lisp
+(setq 'term-buffer-maximum-size 0)
+#+END_SRC
 
-  ;; Fix startup behaviour. Don't show startup screen, replace with dashboard.
-  (setq inhibit-startup-screen t)
+Fix startup behaviour. Don't show startup screen, replace with dashboard.
+#+BEGIN_SRC emacs-lisp
+(setq inhibit-startup-screen t)
+#+END_SRC
 
-  ;; Settings changed through Emacs interface are stored in separate file
-  (setq custom-file "~/.emacs.d/custom.el")
-  (load custom-file :noerror)
+Settings changed through Emacs interface are stored in separate file
+#+BEGIN_SRC emacs-lisp
+(setq custom-file "~/.emacs.d/custom.el")
+(load custom-file :noerror)
+#+END_SRC
 
-  ;; camelCase recognition
-  (global-subword-mode)
+CamelCase recognition
+#+BEGIN_SRC emacs-lisp
+(global-subword-mode)
+#+END_SRC
 
-  ;; c global tab width
-  (setq tab-width 5)
+Global tab width
+#+BEGIN_SRC emacs-lisp
+(setq tab-width 5)
+#+END_SRC
 
-  ;; Display time in mode line
-  (setq display-time-string-forms
-          '((propertize (format-time-string " %b %d, %l:%M%P" now) 'face 'bold)))
-  (setq display-time-and-date t)
-  (display-time-mode 1)
+Display time in mode line
+#+BEGIN_SRC emacs-lisp
+(setq display-time-string-forms
+        '((propertize (format-time-string " %b %d, %l:%M%P" now) 'face 'bold)))
+(setq display-time-and-date t)
+(display-time-mode 1)
+#+END_SRC
 
-  ;; Abbreviate all 'Yes/No' prompts to 'y/n'
-  (fset 'yes-or-no-p 'y-or-n-p)
+Abbreviate all 'Yes/No' prompts to 'y/n'
+#+BEGIN_SRC emacs-lisp
+(fset 'yes-or-no-p 'y-or-n-p)
+#+END_SRC
+
+Set default browser to Firefox
+#+BEGIN_SRC emacs-lisp
+(setenv "BROWSER" "firefox")t
 #+END_SRC
 
 * Major modes
-** org
+** Org
 #+BEGIN_SRC emacs-lisp
   (require 'org)
      (autoload 'org-mode "org" "Org Mode" t)
@@ -96,7 +131,7 @@
       (setq org-src-fontify-natively t
             org-src-tab-acts-natively t
             org-confirm-babel-evaluate nil
-            org-edit-src-content-indentation 2)
+            org-edit-src-content-indentation 0)
       (setq org-hide-emphasis-markers t)
       )
     (add-hook 'org-mode-hook 'my-org-mode-hook)
@@ -133,7 +168,16 @@
                           `(org-document-title ((t (:font "DejaVu Sans" :weight bold :height 1.75)))))
 #+END_SRC
 
-** f90
+** LSP
+#+BEGIN_SRC emacs-lisp
+(use-package lsp-mode
+  :ensure t
+  :commands lsp
+  :hook ((python-mode) . lsp)
+)
+#+END_SRC
+
+** Fortran 90
 #+BEGIN_SRC emacs-lisp
   (defun my-f90-mode-hook ()
     (setq f90-font-lock-keywords f90-font-lock-keywords-3)
@@ -152,7 +196,7 @@
   (add-hook 'f90-mode-hook 'my-f90-mode-hook)
 #+END_SRC
 
-** python
+** Python
 #+BEGIN_SRC emacs-lisp
   (defun abell/python-mode-hook ()
     (setq electric-pair-mode t)
@@ -160,34 +204,77 @@
   (add-hook 'python-mode-hook 'abell/python-mode-hook)
 #+END_SRC
 
-** emacs-lisp
+** Emacs-Lisp
 #+BEGIN_SRC emacs-lisp
   (define-key emacs-lisp-mode-map (kbd "C-c C-a") 'eval-buffer)
   (define-key emacs-lisp-mode-map (kbd "C-c C-r") 'eval-region)
 #+END_SRC
 
-** tex
+** TeX
 #+BEGIN_SRC emacs-lisp
-  (use-package auctex
-    :ensure t
+  (defun TeX-inline-math-abell()
+    (interactive)
+    (insert "\\(  \\)")
+    (backward-char 3))
+  (defun TeX-fullline-math-abell()
+    (interactive)
+    (insert "\\[  \\]")
+    (backward-char 3))
+
+  (defun TeX-align-newline-abell()
+    (interactive)
+    (insert "\\\\")
+    (newline)
+    (insert "&= ")
+    (indent-for-tab-command))
+
+  (defun abell/TeX-round-brackets ()
+    (interactive)
+    (insert "\\left(  \\right)")
+    (backward-char 8)
+    )
+
+  (defun abell/TeX-square-brackets ()
+    (interactive)
+    (insert "\\left[  \\right]")
+    (backward-char 8)
+    )
+
+  (defun abell/TeX-curly-brackets ()
+    (interactive)
+    (insert "\\left\\{  \\right\\}")
+    (backward-char 9)
     )
 #+END_SRC
 
-** LSP
 #+BEGIN_SRC emacs-lisp
-  ;; (use-package lsp-mode
-  ;;   :ensure t
-  ;; )
-#+END_SRC
-
-* Minor modes
-** linum mode
-#+BEGIN_SRC emacs-lisp
-  (require 'linum)
-  (setq linum-disabled-modes-list '(eshell-mode wl-summary-mode
-       compilation-mode text-mode dired-mode pdf-view-mode
-       doc-view-mode shell-mode pdf-view-mode image-mode
-       term-mode))
+(require 'tex)
+(defun my-LaTeX-mode-hook ()
+  (setq TeX-auto-save t)
+  (setq TeX-parse-self t)
+  (setq-default TeX-master nil)
+  (setq TeX-PDF-mode t)
+  (visual-line-mode 1)
+  ;; (adaptive-wrap-prefix-mode 1)
+  (flyspell-mode 1)
+  (LaTeX-math-mode 1)
+  (TeX-source-correlate-mode 1)
+  (outline-minor-mode 1)
+  (electric-pair-mode 1)
+  ;; (rainbow-delimiters-mode 1)
+  (local-set-key (kbd "C-c m") 'TeX-inline-math-abell)
+  (local-set-key (kbd "C-c m") 'TeX-inline-math-abell)
+  (local-set-key (kbd "C-c M-m") 'TeX-fullline-math-abell)
+  (local-set-key (kbd "C-c H-(") 'abell/TeX-round-brackets)
+  (local-set-key (kbd "C-c H-[") 'abell/TeX-square-brackets)
+  (local-set-key (kbd "C-c H-{") 'abell/TeX-curly-brackets)
+  (local-set-key (kbd "C-M-=") '(lambda () (interactive) (insert "&= ")))
+  (local-set-key (kbd "C-c b") 'tex-latex-block)
+  (local-set-key (kbd "<C-tab>") 'outline-toggle-children)
+  (local-set-key (kbd "<C-return>") 'TeX-align-newline-abell)
+  (local-set-key (kbd "H-a") '(lambda () (interactive) (save-buffer) (TeX-command-run-all)))
+  )
+(add-hook 'LaTeX-mode-hook 'my-LaTeX-mode-hook)
 #+END_SRC
 
 * Packages
@@ -219,7 +306,16 @@
     )
 #+END_SRC
 
-** projectile
+** Linum
+#+BEGIN_SRC emacs-lisp
+  (require 'linum)
+  (setq linum-disabled-modes-list '(eshell-mode wl-summary-mode
+       compilation-mode text-mode dired-mode pdf-view-mode
+       doc-view-mode shell-mode pdf-view-mode image-mode
+       term-mode))
+#+END_SRC
+
+** Projectile
 #+BEGIN_SRC emacs-lisp
   (use-package projectile
     :ensure t
@@ -240,7 +336,7 @@
     )
 #+END_SRC
 
-** spaceline
+** Spaceline
 #+BEGIN_SRC emacs-lisp
   (use-package spaceline
     :ensure t
@@ -278,7 +374,7 @@
    )
 #+END_SRC
 
-** ace window
+** Ace Window
 #+BEGIN_SRC emacs-lisp
   (use-package ace-window
     :ensure t
@@ -302,7 +398,7 @@
     )
 #+END_SRC
 
-** yasnippet
+** Yasnippet
 #+BEGIN_SRC emacs-lisp
   (use-package yasnippet
     :ensure t
@@ -315,7 +411,7 @@
     )
 #+END_SRC
 
-** simpleclip
+** Simpleclip
 #+BEGIN_SRC emacs-lisp
   (use-package simpleclip
     :ensure t
@@ -374,6 +470,28 @@ Enable flyspell for all text-modes.
 Enable flyspell for comments and strings in programming languages.
 #+BEGIN_SRC emacs-lisp
   (add-hook 'prog-mode-hook 'flyspell-prog-mode)
+#+END_SRC
+
+** Company
+#+BEGIN_SRC emacs-lisp
+  (use-package company
+    :ensure t
+    :config
+    (setq company-idle-delay 0)
+    (setq company-minimum-prefix-length 2)
+
+    (global-company-mode t)
+    )
+#+END_SRC
+
+*** Company-LSP
+#+BEGIN_SRC emacs-lisp
+(use-package company-lsp
+  :ensure t
+  :config
+  (setq company-lsp-enable-snippet t)
+  (push `company-lsp company-backends)
+  )
 #+END_SRC
 
 * Misc Functions
