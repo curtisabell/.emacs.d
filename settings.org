@@ -1,3 +1,4 @@
+#+MACRO: color @@html:<font color="$1">$2</font>@@
 * Theme settings
   #+begin_src emacs-lisp
   (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
@@ -59,7 +60,7 @@
 ;; (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
 #+end_src
 
-*** Highlight the current line in GUI                            :DISABLED:
+*** {{{color(red,[Disabled]}}} Highlight the current line in GUI
 #+begin_src emacs-lisp :tangle no
 (when window-system
   (global-hl-line-mode))
@@ -91,7 +92,7 @@
 (setq tab-width 5)
 #+end_src
 
-*** Display time in mode line                                      :BROKEN:
+*** Display time in mode line
 #+begin_src emacs-lisp
 (setq display-time-string-forms
         '((propertize (format-time-string " %b %d, %l:%M%P" now) 'face 'bold)))
