@@ -93,13 +93,14 @@
 #+end_src
 
 *** Display time in mode line
-**** TODO Make this work with spaceline
 #+begin_src emacs-lisp :tangle no
 (setq display-time-string-forms
         '((propertize (format-time-string " %b %d, %l:%M%P" now) 'face 'bold)))
 (setq display-time-and-date t)
 (display-time-mode 1)
 #+end_src
+
+ - Currently isn't compatible with spaceline, needs to be reworked.
 
 *** Abbreviate all 'Yes/No' prompts to 'y/n'
 #+begin_src emacs-lisp
