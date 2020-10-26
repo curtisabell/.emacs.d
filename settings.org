@@ -4,8 +4,6 @@
   (when (display-graphic-p) (load-theme 'abell-dark t))
   #+end_src
 
-* Package installation
-
 * Emacs General Configuration
 ** Sensible defaults
    #+begin_src emacs-lisp
@@ -135,7 +133,7 @@ Abbreviate all 'Yes/No' prompts to 'y/n'
                            (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
 #+end_src
 
-*** org-bullets mode
+*** Org-bullets mode
 #+begin_src emacs-lisp
 (use-package org-bullets
   :ensure org
@@ -167,6 +165,13 @@ Abbreviate all 'Yes/No' prompts to 'y/n'
 )
 #+end_src
 
+*** LSP-Latex
+#+begin_src emacs-lisp
+(use-package lsp-latex
+  :ensure t
+)
+#+end_src
+
 ** Fortran 90
 #+begin_src emacs-lisp
 (defun my-f90-mode-hook ()
@@ -176,7 +181,6 @@ Abbreviate all 'Yes/No' prompts to 'y/n'
   (abbrev-mode 1)                       ; turn on abbreviation mode
   (turn-on-font-lock)                   ; syntax highlighting
   (auto-fill-mode 0)                    ; turn off auto-filling
-  (flyspell-prog-mode)
   (lsp 1)
   ;; (local-set-key (kbd "H-t") 'abell/f90-comment-header)
   (local-set-key (kbd "H-M-h") 'abell/f90-comment-header-block)
@@ -478,7 +482,7 @@ Enable flyspell for all text-modes.
 
 Enable flyspell for comments and strings in programming languages.
 #+begin_src emacs-lisp
-(add-hook 'prog-mode-hook 'flyspell-prog-mode)
+;; (add-hook 'prog-mode-hook 'flyspell-prog-mode)
 #+end_src
 
 ** Company
@@ -504,12 +508,12 @@ Adds icons to Company
 
 *** Company-LSP
 #+begin_src emacs-lisp
-(use-package company-lsp
-  :ensure t
-  :config
-  (setq company-lsp-enable-snippet t)
-  (push `company-lsp company-backends)
-  )
+;; (use-package company-lsp
+;;   :ensure t
+;;   :config
+;;   (setq company-lsp-enable-snippet t)
+;;   (push `company-lsp company-backends)
+;;   )
 #+end_src
 
 * Misc Functions
@@ -530,6 +534,11 @@ Adds icons to Company
   (interactive)
   (message (buffer-file-name)))
 (global-set-key (kbd "H-b") 'abell/view-buffer-name)
+#+end_src
+
+** Copy current buffer filename to kill ring
+#+begin_src emacs-lisp
+(global-set-key (kbd "C-H-b") (lambda () (interactive) (kill-new (buffer-file-name))))
 #+end_src
 
 ** Swapping lines being commented above and below
@@ -700,13 +709,13 @@ Adds icons to Company
 
 * Misc keybindings
 #+begin_src emacs-lisp
-  (global-set-key (kbd "M-n") 'forward-paragraph)
-  (global-set-key (kbd "M-p") 'backward-paragraph)
-  (global-set-key (kbd "M-]") 'other-frame)
-  (global-set-key (kbd "M-[") 'other-window)
-  (global-set-key (kbd "C-x 4 k") 'kill-buffer-and-window)
-  (global-set-key (kbd "<menu>") 'shell-command)
-  (global-set-key (kbd "C-c n") (lambda () (interactive) (insert-char 10008))) ; ✘
-  (global-set-key (kbd "H-y") (lambda () (interactive) (insert-char 10004))) ; ✔
-  (global-set-key (kbd "C-H-y") (lambda () (interactive) (count-matches "✔" 0 nil t))) ; Count ✔
+(global-set-key (kbd "M-n") 'forward-paragraph)
+(global-set-key (kbd "M-p") 'backward-paragraph)
+(global-set-key (kbd "M-]") 'other-frame)
+(global-set-key (kbd "M-[") 'other-window)
+(global-set-key (kbd "C-x 4 k") 'kill-buffer-and-window)
+(global-set-key (kbd "<menu>") 'shell-command)
+(global-set-key (kbd "C-c n") (lambda () (interactive) (insert-char 10008))) ; ✘
+(global-set-key (kbd "H-y") (lambda () (interactive) (insert-char 10004))) ; ✔
+(global-set-key (kbd "C-H-y") (lambda () (interactive) (count-matches "✔" 0 nil t))) ; Count ✔
 #+end_src
