@@ -181,15 +181,49 @@ Abbreviate all 'Yes/No' prompts to 'y/n'
   (abbrev-mode 1)                       ; turn on abbreviation mode
   (turn-on-font-lock)                   ; syntax highlighting
   (auto-fill-mode 0)                    ; turn off auto-filling
-  (lsp 1)
-  ;; (local-set-key (kbd "H-t") 'abell/f90-comment-header)
+  (lsp 1)                               ; enable lsp-mode
   (local-set-key (kbd "H-M-h") 'abell/f90-comment-header-block)
-  (local-set-key (kbd "H-w") 'abell/insert-f90-write)
-  (local-set-key (kbd "C-H-w") 'abell/insert-f90-write)
-  ;; (local-set-key (kbd "H-p") 'abell/insert-f90-print)
-  (local-set-key (kbd "H-p") 'abell/insert-double-precision)
   )
 (add-hook 'f90-mode-hook 'my-f90-mode-hook)
+#+end_src
+
+*** f90 comment block
+#+begin_src emacs-lisp
+(defun abell/f90-comment-header-block (title)
+  "Inserts a commented title block for f90"
+  (interactive "sEnter a title: ")
+  (defvar blank-len 1)
+  (setq blank-len (/ (- 69 (length title)) 2))
+  (newline)
+  (dotimes (jj 5)
+    (case jj
+      ((0 4)
+       (indent-for-tab-command)
+       (insert "!")
+       (dotimes (ii 69) (insert "-"))
+       (insert "!")
+       (newline))
+      ((1 3)
+       (indent-for-tab-command)
+       (insert "!")
+       (dotimes (ii 69) (insert " "))
+       (insert "!")
+       (newline))
+      (2
+       (indent-for-tab-command)
+       (insert "!")
+       (dotimes (ii blank-len)
+	 (insert " "))
+       (if (= (mod (length title) 2) 0)
+	   (insert " ")
+	 )
+       (insert title)
+       (dotimes (ii blank-len)
+	 (insert " "))
+       (insert "!")
+       (newline))
+      ))
+  )
 #+end_src
 
 ** Python
@@ -715,6 +749,10 @@ Adds icons to Company
 (global-set-key (kbd "M-[") 'other-window)
 (global-set-key (kbd "C-x 4 k") 'kill-buffer-and-window)
 (global-set-key (kbd "<menu>") 'shell-command)
+#+end_src
+
+** Code marking
+#+begin_src emacs-lisp
 (global-set-key (kbd "C-c n") (lambda () (interactive) (insert-char 10008))) ; ✘
 (global-set-key (kbd "H-y") (lambda () (interactive) (insert-char 10004))) ; ✔
 (global-set-key (kbd "C-H-y") (lambda () (interactive) (count-matches "✔" 0 nil t))) ; Count ✔
