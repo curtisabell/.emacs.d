@@ -22,22 +22,23 @@
 #+end_src
 
 ** Other Configurations
+*** Enable UTF-8 (unicode) support.
 #+begin_src emacs-lisp
   (set-language-environment "UTF-8")
   (set-default-coding-systems 'utf-8)
 #+end_src
 
-Tab inserts spaces
+*** Tab inserts spaces
 #+begin_src emacs-lisp
 (setq-default indent-tabs-mode 0)
 #+end_src
 
-Delete selection upon backspacing or typing.
+*** Delete selection upon backspacing or typing.
 #+begin_src emacs-lisp
 (delete-selection-mode 0)
 #+end_src
 
-Don't show menu or scroll bar
+*** Don't show menu or scroll bar
 #+begin_src emacs-lisp
 (tool-bar-mode 0)
 (menu-bar-mode 0)
@@ -45,12 +46,12 @@ Don't show menu or scroll bar
   (scroll-bar-mode -1))
 #+end_src
 
-Emacs has a silly warning bell by default. This gets rid of it.
+*** Disabled warning bell
 #+begin_src emacs-lisp
 (setq ring-bell-function 'ignore)
 #+end_src
 
-Fix Emacs' mouse scrolling behaviour
+*** Fix Emacs' mouse scrolling behaviour
 #+begin_src emacs-lisp
 (setq scroll-conservatively 100) ;; When cursor moves outside window, don't jump erratically
 (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
@@ -58,39 +59,39 @@ Fix Emacs' mouse scrolling behaviour
 ;; (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
 #+end_src
 
-Highlight the current line in GUI
+*** Highlight the current line in GUI                            :DISABLED:
 #+begin_src emacs-lisp :tangle no
 (when window-system
   (global-hl-line-mode))
 #+end_src
 
-Enable disabled commands
+*** Enable disabled commands
 #+begin_src emacs-lisp
 (put 'narrow-to-region 'disabled nil)
 #+end_src
 
-Fix startup behaviour. Don't show startup screen, replace with dashboard.
+*** Disable startup screen
 #+begin_src emacs-lisp
 (setq inhibit-startup-screen t)
 #+end_src
 
-Settings changed through Emacs interface are stored in separate file
+*** Save custom configuration in custom.el
 #+begin_src emacs-lisp
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file :noerror)
 #+end_src
 
-CamelCase recognition
+*** CamelCase recognition
 #+begin_src emacs-lisp
 (global-subword-mode)
 #+end_src
 
-Global tab width
+*** Set global tab width
 #+begin_src emacs-lisp
 (setq tab-width 5)
 #+end_src
 
-Display time in mode line
+*** Display time in mode line                                      :BROKEN:
 #+begin_src emacs-lisp
 (setq display-time-string-forms
         '((propertize (format-time-string " %b %d, %l:%M%P" now) 'face 'bold)))
@@ -98,7 +99,7 @@ Display time in mode line
 (display-time-mode 1)
 #+end_src
 
-Abbreviate all 'Yes/No' prompts to 'y/n'
+*** Abbreviate all 'Yes/No' prompts to 'y/n'
 #+begin_src emacs-lisp
 (fset 'yes-or-no-p 'y-or-n-p)
 #+end_src
