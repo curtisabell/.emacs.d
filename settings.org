@@ -59,9 +59,9 @@ Fix Emacs' mouse scrolling behaviour
 #+end_src
 
 Highlight the current line in GUI
-#+begin_src emacs-lisp
-;; (when window-system
-;;   (global-hl-line-mode))
+#+begin_src emacs-lisp :tangle no
+(when window-system
+  (global-hl-line-mode))
 #+end_src
 
 Enable disabled commands
@@ -187,6 +187,11 @@ Abbreviate all 'Yes/No' prompts to 'y/n'
 (add-hook 'f90-mode-hook 'my-f90-mode-hook)
 #+end_src
 
+ - To install the Fortran LSP server, run
+#+begin_src sh :tangle no :eval no
+python3 -m pip install fortran-language-server
+#+end_src
+
 *** f90 comment block
 #+begin_src emacs-lisp
 (defun abell/f90-comment-header-block (title)
@@ -235,6 +240,11 @@ Abbreviate all 'Yes/No' prompts to 'y/n'
 (add-hook 'python-mode-hook 'abell/python-mode-hook)
 #+end_src
 
+ - To install the python LSP server, run
+#+begin_src sh :tangle no :eval no
+python -m pip install python-language-server[all]
+#+end_src
+
 ** C++
 #+begin_src emacs-lisp
 (defun abell/cpp-mode-hook ()
@@ -242,6 +252,12 @@ Abbreviate all 'Yes/No' prompts to 'y/n'
   (lsp 1)
   )
 (add-hook 'c++-mode-hook 'abell/cpp-mode-hook)
+#+end_src
+
+ - To install the C++ LSP server, run
+#+begin_src sh :tangle no :eval no
+sudo apt install clangd-9
+sudo update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-9 100
 #+end_src
 
 ** Emacs-Lisp
