@@ -257,6 +257,13 @@ sudo apt install clangd-9
 sudo update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-9 100
 #+end_src
 
+** Julia
+#+begin_src emacs-lisp
+(use-package julia
+  :ensure t
+  )
+#+end_src
+
 ** Emacs-Lisp
 #+begin_src emacs-lisp
   (define-key emacs-lisp-mode-map (kbd "C-c C-a") 'eval-buffer)
