@@ -340,19 +340,19 @@ sudo update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-9 100
 * Packages
 ** Helm
 #+begin_src emacs-lisp
-  (use-package helm
-    :ensure t
-    :bind-keymap
-    :init
-    (helm-mode 1)
-    :config
-    (require 'helm-config)
-    (global-set-key (kbd "M-x") 'helm-M-x)
-    (global-set-key (kbd "C-x C-f") 'helm-find-files)
-    (global-set-key (kbd "C-x C-b") 'helm-buffers-list)
-    (global-set-key (kbd "C-x b") 'helm-mini)
-    (setq helm-ff-skip-boring-files t)
-    )
+(use-package helm
+  :ensure t
+  :bind-keymap
+  :init
+  (helm-mode 1)
+  :config
+  (require 'helm-config)
+  (global-set-key (kbd "M-x") 'helm-M-x)
+  (global-set-key (kbd "C-x C-f") 'helm-find-files)
+  (global-set-key (kbd "C-x C-b") 'helm-buffers-list)
+  (global-set-key (kbd "C-x b") 'helm-mini)
+  ;; (setq helm-ff-skip-boring-files 0)
+  )
 #+end_src
 
 *** helm-spotify-plus
@@ -382,7 +382,7 @@ sudo update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-9 100
   :ensure t
   :bind-keymap
   ("C-c p" . projectile-command-map)
-  :init
+  :initp
   :config
   )
 #+end_src
@@ -434,30 +434,6 @@ sudo update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-9 100
  spaceline-separator-dir-left '(right . right)
  spaceline-separator-dir-right '(left . left)
  )
-#+end_src
-
-** Ace Window
-#+begin_src emacs-lisp
-(use-package ace-window
-  :ensure t
-  :bind-keymap
-  ("H-o" . ace-select-window)
-  ("H-1" . ace-switch-1)
-  ("H-2" . ace-switch-2)
-  ("H-3" . ace-switch-3)
-  ("H-4" . ace-switch-4)
-  :init
-  :config
-  (fset 'ace-switch-1
-        [?\H-o ?1])
-  (fset 'ace-switch-2
-        [?\H-o ?2])
-  (fset 'ace-switch-3
-        [?\H-o ?3])
-  (fset 'ace-switch-4
-        [?\H-o ?4])
-
-  )
 #+end_src
 
 ** Yasnippet
@@ -560,14 +536,20 @@ Adds icons to Company
 )
 #+end_src
 
-*** Company-LSP
+** Dashboard
 #+begin_src emacs-lisp
-;; (use-package company-lsp
-;;   :ensure t
-;;   :config
-;;   (setq company-lsp-enable-snippet t)
-;;   (push `company-lsp company-backends)
-;;   )
+(use-package dashboard
+  :ensure t
+  :config
+  )
+#+end_src
+
+** Magit
+#+begin_src emacs-lisp
+(use-package magit
+  :ensure t
+  :config
+  )
 #+end_src
 
 * Misc Functions
