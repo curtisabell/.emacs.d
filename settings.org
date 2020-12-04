@@ -1,4 +1,3 @@
-#+MACRO: color @@html:<font color="$1">$2</font>@@
 * Theme settings
   #+begin_src emacs-lisp
   (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
@@ -126,6 +125,7 @@
           org-confirm-babel-evahhluate nil
           org-edit-src-content-indentation 0)
     (setq org-hide-emphasis-markers t)
+    (local-set-key (kbd "C-c m") 'TeX-inline-math-abell)
     )
 (add-hook 'org-mode-hook 'my-org-mode-hook)
 #+end_src
@@ -166,13 +166,6 @@
 (use-package lsp-mode
   :ensure t
   :commands lsp
-)
-#+end_src
-
-*** LSP-Latex
-#+begin_src emacs-lisp
-(use-package lsp-latex
-  :ensure t
 )
 #+end_src
 
@@ -264,6 +257,13 @@ sudo apt install clangd-9
 sudo update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-9 100
 #+end_src
 
+** Julia
+#+begin_src emacs-lisp
+(use-package julia
+  :ensure t
+  )
+#+end_src
+
 ** Emacs-Lisp
 #+begin_src emacs-lisp
   (define-key emacs-lisp-mode-map (kbd "C-c C-a") 'eval-buffer)
@@ -272,22 +272,76 @@ sudo update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-9 100
 
 ** TeX
 #+begin_src emacs-lisp
+(require 'tex)
+(defun my-LaTeX-mode-hook ()
+  (setq TeX-auto-save t)
+  (setq TeX-parse-self t)
+  (setq-default TeX-master nil)
+  (setq TeX-PDF-mode t)
+  (visual-line-mode 1)
+  ;; (adaptive-wrap-prefix-mode 1)
+  (flyspell-mode 1)
+  (LaTeX-math-mode 1)
+  (TeX-source-correlate-mode 1)
+  (outline-minor-mode 1)
+  (electric-pair-mode 1)
+  ;; (rainbow-delimiters-mode 1)
+  (local-set-key (kbd "C-c m") 'TeX-inline-math-abell)
+  (local-set-key (kbd "C-c H-(") 'abell/TeX-round-brackets)
+  (local-set-key (kbd "C-c H-[") 'abell/TeX-square-brackets)
+  (local-set-key (kbd "C-c H-{") 'abell/TeX-curly-brackets)
+  (local-set-key (kbd "C-M-=") '(lambda () (interactive) (insert "&= ")))
+  (local-set-key (kbd "C-c b") 'tex-latex-block)
+  (local-set-key (kbd "<C-tab>") 'outline-toggle-children)
+  (local-set-key (kbd "<C-return>") 'TeX-align-newline-abell)
+  (local-set-key (kbd "H-a") '(lambda () (interactive) (save-buffer) (TeX-command-run-all)))
+  )
+(add-hook 'LaTeX-mode-hook 'my-LaTeX-mode-hook)
+#+end_src
+
+*** LSP-LaTeX
+To install the LSP server for TeX, we need =texlab=, the LSP server. This is built in Rust, and can be installed using Cargo, which comes with the =rustc= compiler.
+#+begin_src sh :tangle no :eval no
+sudo apt install rustc
+cargo install --git https://github.com/latex-lsp/texlab.git
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package lsp-latex
+  :ensure t
+  :config
+  (add-to-list 'load-path "~/.cargo/bin/texlab")
+
+  (with-eval-after-load "tex-mode"
+    (add-hook 'tex-mode-hook 'lsp)
+    (add-hook 'latex-mode-hook 'lsp))
+
+  (with-eval-after-load "bibtex"
+    (add-hook 'bibtex-mode-hook 'lsp))
+)
+#+end_src
+
+*** TeX functions
+**** Insert inline-math
+#+begin_src emacs-lisp
   (defun TeX-inline-math-abell()
     (interactive)
     (insert "\\(  \\)")
     (backward-char 3))
-  (defun TeX-fullline-math-abell()
-    (interactive)
-    (insert "\\[  \\]")
-    (backward-char 3))
+#+end_src
 
+**** New line setup for align environments
+#+begin_src emacs-lisp
   (defun TeX-align-newline-abell()
     (interactive)
     (insert "\\\\")
     (newline)
     (insert "&= ")
     (indent-for-tab-command))
+#+end_src
 
+**** Insert various parentheses
+#+begin_src emacs-lisp
   (defun abell/TeX-round-brackets ()
     (interactive)
     (insert "\\left(  \\right)")
@@ -305,36 +359,6 @@ sudo update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-9 100
     (insert "\\left\\{  \\right\\}")
     (backward-char 9)
     )
-#+end_src
-
-#+begin_src emacs-lisp
-(require 'tex)
-(defun my-LaTeX-mode-hook ()
-  (setq TeX-auto-save t)
-  (setq TeX-parse-self t)
-  (setq-default TeX-master nil)
-  (setq TeX-PDF-mode t)
-  (visual-line-mode 1)
-  ;; (adaptive-wrap-prefix-mode 1)
-  (flyspell-mode 1)
-  (LaTeX-math-mode 1)
-  (TeX-source-correlate-mode 1)
-  (outline-minor-mode 1)
-  (electric-pair-mode 1)
-  ;; (rainbow-delimiters-mode 1)
-  (local-set-key (kbd "C-c m") 'TeX-inline-math-abell)
-  (local-set-key (kbd "C-c m") 'TeX-inline-math-abell)
-  (local-set-key (kbd "C-c M-m") 'TeX-fullline-math-abell)
-  (local-set-key (kbd "C-c H-(") 'abell/TeX-round-brackets)
-  (local-set-key (kbd "C-c H-[") 'abell/TeX-square-brackets)
-  (local-set-key (kbd "C-c H-{") 'abell/TeX-curly-brackets)
-  (local-set-key (kbd "C-M-=") '(lambda () (interactive) (insert "&= ")))
-  (local-set-key (kbd "C-c b") 'tex-latex-block)
-  (local-set-key (kbd "<C-tab>") 'outline-toggle-children)
-  (local-set-key (kbd "<C-return>") 'TeX-align-newline-abell)
-  (local-set-key (kbd "H-a") '(lambda () (interactive) (save-buffer) (TeX-command-run-all)))
-  )
-(add-hook 'LaTeX-mode-hook 'my-LaTeX-mode-hook)
 #+end_src
 
 * Packages
@@ -536,19 +560,32 @@ Adds icons to Company
 )
 #+end_src
 
-** Dashboard
-#+begin_src emacs-lisp
-(use-package dashboard
-  :ensure t
-  :config
-  )
-#+end_src
-
 ** Magit
 #+begin_src emacs-lisp
 (use-package magit
   :ensure t
   :config
+  )
+#+end_src
+
+** Dashboard
+#+begin_src emacs-lisp
+(defun abell/dashboard-banner ()
+  "Display current version of Emacs below the banner"
+  (setq dashboard-banner-logo-title
+        (format "Emacs %s" emacs-version)))
+
+(use-package dashboard
+  :ensure t
+  :init
+  (add-hook 'after-init-hook 'dashboard-refresh-buffer)
+  (add-hook 'dashboard-mode-hook 'abell/dashboard-banner)
+  :config
+  (setq dashboard-startup-banner 'logo)
+  (dashboard-setup-startup-hook)
+  (setq dashboard-items '((bookmarks  . 5)
+                          (recents . 5)
+					 (projects . 20)))
   )
 #+end_src
 
