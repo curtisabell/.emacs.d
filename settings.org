@@ -610,6 +610,27 @@ Adds icons to Company
   )
 #+end_src
 
+** Dashboard
+#+begin_src emacs-lisp
+(defun abell/dashboard-banner ()
+  "Display current version of Emacs below the banner"
+  (setq dashboard-banner-logo-title
+        (format "Emacs %s" emacs-version)))
+
+(use-package dashboard
+  :ensure t
+  :init
+  (add-hook 'after-init-hook 'dashboard-refresh-buffer)
+  (add-hook 'dashboard-mode-hook 'abell/dashboard-banner)
+  :config
+  (setq dashboard-startup-banner 'logo)
+  (dashboard-setup-startup-hook)
+  (setq dashboard-items '((bookmarks  . 5)
+                          (recents . 5)
+					 (projects . 20)))
+  )
+#+end_src
+
 * Misc Functions
 ** Yank to a newline
 #+begin_src emacs-lisp
