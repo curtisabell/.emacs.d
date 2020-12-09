@@ -140,7 +140,7 @@
 *** Org-bullets mode
 #+begin_src emacs-lisp
 (use-package org-bullets
-  :ensure org
+  :ensure t
   :init
   (org-bullets-mode 1)
   :config
@@ -259,7 +259,7 @@ sudo update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-9 100
 
 ** Julia
 #+begin_src emacs-lisp
-(use-package julia
+(use-package julia-mode
   :ensure t
   )
 #+end_src
@@ -272,7 +272,11 @@ sudo update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-9 100
 
 ** TeX
 #+begin_src emacs-lisp
-(require 'tex)
+(use-package auctex
+:ensure t
+)
+
+
 (defun my-LaTeX-mode-hook ()
   (setq TeX-auto-save t)
   (setq TeX-parse-self t)
