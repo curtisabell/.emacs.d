@@ -272,11 +272,6 @@ sudo update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-9 100
 
 ** TeX
 #+begin_src emacs-lisp
-(use-package auctex
-:ensure t
-)
-
-
 (defun my-LaTeX-mode-hook ()
   (setq TeX-auto-save t)
   (setq TeX-parse-self t)
@@ -410,7 +405,7 @@ cargo install --git https://github.com/latex-lsp/texlab.git
   :ensure t
   :bind-keymap
   ("C-c p" . projectile-command-map)
-  :initp
+  :init
   :config
   )
 #+end_src
