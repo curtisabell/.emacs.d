@@ -801,8 +801,8 @@ Adds icons to Company
   (interactive "p*")
   (my-increment-number-decimal (if arg (- arg) -1)))
 
-(global-set-key (kbd "C-c C-+") 'my-increment-number-decimal)
-(global-set-key (kbd "C-c C--") 'my-decrement-number-decimal)
+(global-set-key (kbd "C-c i") 'my-increment-number-decimal)
+(global-set-key (kbd "C-c d") 'my-decrement-number-decimal)
 #+end_src
 
 * Misc keybindings
