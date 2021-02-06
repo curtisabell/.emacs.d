@@ -3,6 +3,8 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   '("d0ac211e62849d3aed426287b1dfa42bce3d15beccf9e6a7b523bac226101d51" default))
  '(package-selected-packages '(simpleclip yasnippet use-package babel)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

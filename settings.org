@@ -1,7 +1,12 @@
 * Theme settings
   #+begin_src emacs-lisp
   (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
-  (when (display-graphic-p) (load-theme 'abell-dark t))
+  (if (display-graphic-p)
+    (progn
+    ;; If in a graphical display
+    (load-theme 'abell-dark t))
+  ;; If in terminal emacs, potentially choose different theme
+  (load-theme 'abell-dark t))
   #+end_src
 
 * Emacs General Configuration
