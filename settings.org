@@ -233,6 +233,8 @@ python3 -m pip install fortran-language-server
 (defun abell/python-mode-hook ()
   (setq electric-pair-mode t)
   (lsp 1)
+  ;; (setq lsp-restart 'auto-restart)
+  (setq lsp-restart 'ignore)
   )
 (add-hook 'python-mode-hook 'abell/python-mode-hook)
 #+end_src
