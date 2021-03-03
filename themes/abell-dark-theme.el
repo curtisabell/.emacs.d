@@ -12,24 +12,22 @@
  ;;; Comment colour
  '(font-lock-comment-face ((t (:italic t :foreground "grey60"))))
  ;;; String colour
- '(font-lock-string-face ((t (:foreground "Magenta"))))
- ;;; call, write, allocate, open, do, if etc
+ '(font-lock-string-face ((t (:foreground "firebrick1"))))
+ ;;; Keywords such as: call, write, allocate, open, do, for, if, with, return etc
  '(font-lock-keyword-face ((t (:bold t :foreground "Cyan"))))
- ;;; '(font-lock-keyword-face
- '(font-lock-warning-face ((t (:bold t :foreground "Pink"))))
- ;;; No use in fortran? - used for labels
- ;;; Used for things like package names in use-package
- '(font-lock-constant-face ((t (:foreground "OrangeRed"))))
- ;; '(font-lock-constant-face ((t (:foreground "DarkGreen"))))
- ;;; Variable types (real, int etc) ForestGreen
+ ;;; Keywords such as: True, False, None, NULL
+ '(font-lock-constant-face ((t (:foreground "magenta1"))))
+ ;;; Static Variable types (real, int, boolean, character etc)
  '(font-lock-type-face ((t (:foreground "green3"))))
  ;;; Variable names
  '(font-lock-variable-name-face ((t (:foreground "goldenrod1"))));;;"DarkGoldenrod"))))
- ;;; Program name, modules, functions etc
+ ;;; Name of programs, functions, subroutines etc
  '(font-lock-function-name-face ((t (:foreground "SpringGreen"))))
- ;; '(font-lock-function-name-face ((t (:foreground "blue2"))))
- ;;; other stuff i couldnt be bothered figuring out lol
+ ;;; Very rare, autoload in this file
+ '(font-lock-warning-face ((t (:bold t :foreground "Pink"))))
+ ;;; Only keywords in lisp such as :foreground, :init etc
  '(font-lock-builtin-face ((t (:foreground "SkyBlue"))))
+ ;;; other stuff i couldnt be bothered figuring out
  '(highline-face ((t (:background "grey12"))))
  '(setnu-line-number-face ((t (:background "Grey15" :foreground "White" :bold t))))
  '(show-paren-match-face ((t (:background "grey30"))))
@@ -38,16 +36,6 @@
  '(secondary-selection ((t (:background "navy"))))
  '(widget-field-face ((t (:background "navy"))))
  '(widget-single-line-field-face ((t (:background "royalblue")))))
-
-
-  ;; ;; ;;; Org-mode appearance
-  ;; (org-block-begin-line
-  ;;   ((t (:underline "black" :foreground "white" :background "gray10"))))
-  ;; (org-block-background
-  ;;   ((t (:background "gray20"))))
-  ;; (org-block-end-line
-  ;;   ((t (:overline "black" :foreground "white" :background "gray10"))))
-
 
 ;;;###autoload
 (when load-file-name
