@@ -600,6 +600,58 @@ Adds icons to Company
   )
 #+end_src
 
+** Electric Operator
+#+begin_src emacs-lisp
+(use-package electric-operator
+  :ensure t
+  :hook
+  ((f90-mode python-mode latex-mode) . electric-operator-mode)
+  :config
+  (apply #'electric-operator-add-rules-for-mode 'f90-mode
+         (electric-operator-get-rules-for-mode 'prog-mode))
+  (electric-operator-add-rules-for-mode 'f90-mode
+                                        ;; ensure T/F are not treated as operators
+                                        (cons ".true." nil)
+                                        (cons ".false." nil)
+                                        (cons "=" 'electric-operator-f90-mode-=)
+                                        (cons "." 'electric-operator-f90-mode-generic-operator)
+                                        (cons "*" 'electric-operator-f90-mode-*)
+                                        (cons "/" 'electric-operator-f90-mode-/)
+                                        (cons "::" " :: ")
+                                        (cons "**" "**")
+                                        (cons "%" "%")
+                                        (cons "//" "//"))
+
+  (defun electric-operator-f90-mode-= ()
+    "Handle passing arguments to a function."
+    (cond
+     ((eq (electric-operator-enclosing-paren) ?\() "=")
+     (t " = ")))
+
+  (defun electric-operator-f90-mode-generic-operator()
+    "Treat .<var>. as an operator, otherwise treat '.' as a decimal"
+    (cond
+     ((electric-operator-just-inside-bracket) ".")
+     ((looking-back "\\.[[:alpha:]][[:alpha:][:digit:]_]*" nil)  ". ")
+     ((looking-back "[^[:digit:]+-]" nil) " .")
+     (t ".")))
+
+  (defun electric-operator-f90-mode-*()
+    "Handle write(*,*) and print *, cases"
+    (cond
+     ((electric-operator-just-inside-bracket) "*")
+     ((eq (char-before) ?\,) " *")
+     (t " * ")))
+
+  (defun electric-operator-f90-mode-/()
+    "Handle (/ /) implicit array declaration"
+    "Don't love the looking back locally check, but unsure how to improve"
+    (cond
+     ((electric-operator-just-inside-bracket) "/ ")
+     ((electric-operator-looking-back-locally "^.*(/.*") " /")
+     (t " / "))))
+#+end_src
+
 * Misc Functions
 ** Yank to a newline
 #+begin_src emacs-lisp
