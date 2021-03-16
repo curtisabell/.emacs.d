@@ -908,3 +908,9 @@ Adds icons to Company
 (global-set-key (kbd "H-y") (lambda () (interactive) (insert-char 10004))) ; ✔
 (global-set-key (kbd "C-H-y") (lambda () (interactive) (count-matches "✔" 0 nil t))) ; Count ✔
 #+end_src
+
+* TOOD
+** TODO Figure out good keybinding for popper mode
+** TODO Investigate shackle.el
+ - Used to manipulate how buffers pop up, recommended for popper mode.
+ - https://depp.brause.cc/shackle/
