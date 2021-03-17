@@ -689,20 +689,19 @@ Inserts spaces around operators, including James' additions to f90 mode.
 (use-package popper
   :ensure t
   :bind
-  (("C-~"   . popper-toggle-latest)
-   ("C-`"   . popper-cycle)
+  (("C-`"   . popper-toggle-latest)
+   ("C-~"   . popper-cycle)
    ("C-M-`" . popper-toggle-type))
   :init
   (setq popper-reference-buffers
         '("\\*Messages\\*"
           "Output\\*$"
           help-mode
-          compilation-mode))
+          compilation-mode
+          "\\*ansi-term\\*"))
   (popper-mode 1)
 )
 #+end_src
-
-**
 
 * Misc Functions
 ** Yank to a newline
