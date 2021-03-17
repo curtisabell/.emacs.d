@@ -43,7 +43,7 @@
 (setq-default indent-tabs-mode 0)
 #+end_src
 
-*** Delete selection upon backspacing or typing.
+*** Do not delete selection upon backspacing or typing.
 #+begin_src emacs-lisp
 (delete-selection-mode 0)
 #+end_src
@@ -179,7 +179,7 @@
 )
 #+end_src
 
-** Fortran 90
+** f90
 #+begin_src emacs-lisp
 (defun my-f90-mode-hook ()
   (setq f90-font-lock-keywords f90-font-lock-keywords-3)
@@ -190,6 +190,7 @@
   (auto-fill-mode 0)                    ; turn off auto-filling
   (lsp 1)                               ; enable lsp-mode
   (local-set-key (kbd "H-M-h") 'abell/f90-comment-header-block)
+  (local-set-key (kbd "C-c RET") 'abell/f90-break-line)
   )
 (add-hook 'f90-mode-hook 'my-f90-mode-hook)
 #+end_src
@@ -208,7 +209,7 @@ python3 -m pip install fortran-language-server
   (setq blank-len (/ (- 69 (length title)) 2))
   (newline)
   (dotimes (jj 5)
-    (case jj
+    (cond jj
       ((0 4)
        (indent-for-tab-command)
        (insert "!")
@@ -236,6 +237,33 @@ python3 -m pip install fortran-language-server
        (newline))
       ))
   )
+#+end_src
+
+*** Improved f90-break-line
+#+begin_src emacs-lisp
+(defun abell/f90-break-line (&optional no-update)
+  "Break line at point, insert continuation marker(s) and indent.
+Unless in a string or comment, or if the optional argument NO-UPDATE
+is non-nil, call `f90-update-line' after inserting the continuation marker. Modified to have some extra whitespace before/after the ampersand. Copied from f90.el"
+  (interactive "*P")
+  (cond
+   ((f90-in-string)
+    (insert "&\n&"))
+   ((f90-in-comment)
+    (delete-horizontal-space) ; remove trailing whitespace
+    (insert "\n" (f90-get-present-comment-type)))
+   (t
+    (cond
+     ((looking-back " " 1) (insert "&"))
+     (t (insert " &")))
+    (or no-update (f90-update-line))
+    ;; Check if some whitespace needs to be inserted
+    (newline 1)
+    ;; FIXME also need leading ampersand if split lexical token (eg ==).
+    ;; Or respect f90-no-break-re.
+    (if f90-beginning-ampersand (insert "& ")))
+   )
+  (indent-according-to-mode))
 #+end_src
 
 ** Python
@@ -601,11 +629,11 @@ Adds icons to Company
 #+end_src
 
 ** Electric Operator
+Inserts spaces around operators, including James' additions to f90 mode.
 #+begin_src emacs-lisp
 (use-package electric-operator
   :ensure t
-  :hook
-  ((f90-mode python-mode latex-mode) . electric-operator-mode)
+  :hook ((f90-mode python-mode latex-mode) . electric-operator-mode)
   :config
   (apply #'electric-operator-add-rules-for-mode 'f90-mode
          (electric-operator-get-rules-for-mode 'prog-mode))
@@ -645,11 +673,15 @@ Adds icons to Company
 
   (defun electric-operator-f90-mode-/()
     "Handle (/ /) implicit array declaration"
-    "Don't love the looking back locally check, but unsure how to improve"
     (cond
      ((electric-operator-just-inside-bracket) "/ ")
-     ((electric-operator-looking-back-locally "^.*(/.*") " /")
-     (t " / "))))
+     ((eq (electric-operator-character-after-paren) ?\/) " /")
+     (t " / ")))
+
+  (defun electric-operator-character-after-paren()
+    "Return the character immediately after the opening brace of the current paren group"
+    (let ((ppss (syntax-ppss)))
+      (when (nth 1 ppss) (char-after (+ (nth 1 ppss) 1))))))
 #+end_src
 
 * Misc Functions
