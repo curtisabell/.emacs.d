@@ -694,8 +694,7 @@ Inserts spaces around operators, including James' additions to f90 mode.
    ("C-M-`" . popper-toggle-type))
   :init
   (setq popper-reference-buffers
-        '("\\*Messages\\*"
-          "Output\\*$"
+        '("Output\\*$"
           help-mode
           compilation-mode
           "\\*ansi-term\\*"))
@@ -916,7 +915,7 @@ Inserts spaces around operators, including James' additions to f90 mode.
   (interactive "p*")
   (my-increment-number-decimal (if arg (- arg) -1)))
 
-(global-set-key (kbd "C-c i") 'my-increment-number-decimal)
+(global-set-key (kbd "C-c f") 'my-increment-number-decimal)
 (global-set-key (kbd "C-c d") 'my-decrement-number-decimal)
 #+end_src
 
