@@ -917,7 +917,8 @@ Inserts spaces around operators, including James' additions to f90 mode.
 (global-set-key (kbd "C-c d") 'my-decrement-number-decimal)
 #+end_src
 
-* Misc keybindings
+* Misc
+** Keybindings
 #+begin_src emacs-lisp
 (global-set-key (kbd "M-n") 'forward-paragraph)
 (global-set-key (kbd "M-p") 'backward-paragraph)
@@ -932,6 +933,12 @@ Inserts spaces around operators, including James' additions to f90 mode.
 (global-set-key (kbd "C-c n") (lambda () (interactive) (insert-char 10008))) ; ✘
 (global-set-key (kbd "H-y") (lambda () (interactive) (insert-char 10004))) ; ✔
 (global-set-key (kbd "C-H-y") (lambda () (interactive) (count-matches "✔" 0 nil t))) ; Count ✔
+#+end_src
+
+** My Details
+#+begin_src emacs-lisp
+(setq user-full-name "Curtis Abell"
+      user-mail-address "curtis.abell@adelaide.com")
 #+end_src
 
 * Unimplemented
