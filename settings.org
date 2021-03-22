@@ -25,14 +25,6 @@
    (sensible-defaults/backup-to-temp-directory)
  #+end_src
 
-** GUI-specific
-#+begin_src emacs-lisp
-;; (when (display-graphic-p)
-;;   (add-to-list 'default-frame-alist '(fullscreen . maximized))
-;;   (global-linum-mode t)
-;;   )
-#+end_src
-
 ** Other Configurations
 *** Enable UTF-8 (unicode) support.
 #+begin_src emacs-lisp
