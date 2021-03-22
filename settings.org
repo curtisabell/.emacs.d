@@ -710,10 +710,6 @@ cargo install --git https://github.com/latex-lsp/texlab.git
   )
 #+end_src
 
-
-
-
-
 * Misc
 ** Functions
 *** Yank to a newline
@@ -960,3 +956,5 @@ cargo install --git https://github.com/latex-lsp/texlab.git
  - Used to manipulate how buffers pop up, recommended for popper mode.
  - https://depp.brause.cc/shackle/
 ** Evil mode
+** Whiteroom mode
+ - Has nice centering, might be good for org mode.
