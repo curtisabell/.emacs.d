@@ -110,67 +110,37 @@
 (fset 'yes-or-no-p 'y-or-n-p)
 #+end_src
 
+*** Set default buffer mode to Org mode
+#+begin_src emacs-lisp
+(setq-default major-mode 'org-mode)
+#+end_src
+
 * Major modes
-** Org
+** Calc
 #+begin_src emacs-lisp
-(require 'org)
-(autoload 'org-mode "org" "Org Mode" t)
-(defun my-org-mode-hook ()
-    (setq org-log-done t)
-    (define-key global-map "\C-cl" 'org-store-link)
-    (define-key global-map "\C-ca" 'org-agenda)
-    (visual-line-mode 1)
-    (org-indent-mode 1)
-    (abbrev-mode 1)
-    (org-bullets-mode 1)
-    (flyspell-mode 1)
-    (setq org-src-fontify-natively t
-          org-src-tab-acts-natively t
-          org-confirm-babel-evaluate nil
-          org-edit-src-content-indentation 0)
-    (setq org-hide-emphasis-markers t)
-    (local-set-key (kbd "C-c m") 'TeX-inline-math-abell)
-    )
-(add-hook 'org-mode-hook 'my-org-mode-hook)
+(setq calc-angle-mode 'rad  ; Use radians by default
+      calc-symbolic-mode t) ; Keep things algebraic (e.g. sqrt(2))
 #+end_src
 
-*** Change dashes to bullets in lists
+** C++
 #+begin_src emacs-lisp
-(font-lock-add-keywords 'org-mode
-                        '(("^ +\\([-*]\\) "
-                           (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
-#+end_src
-
-*** Org-bullets mode
-#+begin_src emacs-lisp
-(use-package org-bullets
-  :ensure t
-  :init
-  (org-bullets-mode 1)
-  :config
+(defun abell/cpp-mode-hook ()
+  (setq electric-pair-mode t)
+  (lsp 1)
   )
+(add-hook 'c++-mode-hook 'abell/cpp-mode-hook)
 #+end_src
 
-*** Org header customisation
-#+begin_src emacs-lisp
-(custom-theme-set-faces 'user
-                        `(org-level-8 ((t (:font "DejaVu Sans" :weight bold :height 1.1 :foreground "slate grey"))))
-                        `(org-level-7 ((t (:font "DejaVu Sans" :weight bold :height 1.1 :foreground "violet red"))))
-                        `(org-level-6 ((t (:font "DejaVu Sans" :weight bold :height 1.1 :foreground "steel blue"))))
-                        `(org-level-5 ((t (:font "DejaVu Sans" :weight bold :height 1.1 :foreground "Lime Green"))))
-                        `(org-level-4 ((t (:font "DejaVu Sans" :weight bold :height 1.1 :foreground "OrangeRed"))))
-                        `(org-level-3 ((t (:font "DejaVu Sans" :weight bold :height 1.2 :foreground "cyan"))))
-                        `(org-level-2 ((t (:font "DejaVu Sans" :weight bold :height 1.35 :foreground "goldenrod"))))
-                        `(org-level-1 ((t (:font "DejaVu Sans" :weight bold :height 1.5 :underline t :foreground "Forest Green"))))
-                        `(org-document-title ((t (:font "DejaVu Sans" :weight bold :height 1.75)))))
+ - To install the C++ LSP server, run
+#+begin_src sh :tangle no :eval no
+sudo apt install clangd-9
+sudo update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-9 100
 #+end_src
 
-** LSP
+** Emacs-Lisp
 #+begin_src emacs-lisp
-(use-package lsp-mode
-  :ensure t
-  :commands lsp
-)
+  (define-key emacs-lisp-mode-map (kbd "C-c C-a") 'eval-buffer)
+  (define-key emacs-lisp-mode-map (kbd "C-c C-r") 'eval-region)
 #+end_src
 
 ** f90
@@ -261,6 +231,75 @@ is non-nil, call `f90-update-line' after inserting the continuation marker. Modi
   (indent-according-to-mode))
 #+end_src
 
+** Julia
+#+begin_src emacs-lisp
+(use-package julia-mode
+  :ensure t
+  )
+#+end_src
+
+** LSP
+#+begin_src emacs-lisp
+(use-package lsp-mode
+  :ensure t
+  :commands lsp
+)
+#+end_src
+
+** Org
+#+begin_src emacs-lisp
+(require 'org)
+(autoload 'org-mode "org" "Org Mode" t)
+(defun my-org-mode-hook ()
+    (setq org-log-done t)
+    (define-key global-map "\C-cl" 'org-store-link)
+    (define-key global-map "\C-ca" 'org-agenda)
+    (visual-line-mode 1)
+    (org-indent-mode 1)
+    (abbrev-mode 1)
+    (org-bullets-mode 1)
+    (flyspell-mode 1)
+    (setq org-src-fontify-natively t
+          org-src-tab-acts-natively t
+          org-confirm-babel-evaluate nil
+          org-edit-src-content-indentation 0)
+    (setq org-hide-emphasis-markers t)
+    (local-set-key (kbd "C-c m") 'TeX-inline-math-abell)
+    )
+(add-hook 'org-mode-hook 'my-org-mode-hook)
+#+end_src
+
+*** Change dashes to bullets in lists
+#+begin_src emacs-lisp
+(font-lock-add-keywords 'org-mode
+                        '(("^ +\\([-*]\\) "
+                           (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
+#+end_src
+
+*** Org-bullets mode
+#+begin_src emacs-lisp
+(use-package org-bullets
+  :ensure t
+  :init
+  (org-bullets-mode 1)
+  :config
+  )
+#+end_src
+
+*** Org header customisation
+#+begin_src emacs-lisp
+(custom-theme-set-faces 'user
+                        `(org-level-8 ((t (:font "DejaVu Sans" :weight bold :height 1.1 :foreground "slate grey"))))
+                        `(org-level-7 ((t (:font "DejaVu Sans" :weight bold :height 1.1 :foreground "violet red"))))
+                        `(org-level-6 ((t (:font "DejaVu Sans" :weight bold :height 1.1 :foreground "steel blue"))))
+                        `(org-level-5 ((t (:font "DejaVu Sans" :weight bold :height 1.1 :foreground "Lime Green"))))
+                        `(org-level-4 ((t (:font "DejaVu Sans" :weight bold :height 1.1 :foreground "OrangeRed"))))
+                        `(org-level-3 ((t (:font "DejaVu Sans" :weight bold :height 1.2 :foreground "cyan"))))
+                        `(org-level-2 ((t (:font "DejaVu Sans" :weight bold :height 1.35 :foreground "goldenrod"))))
+                        `(org-level-1 ((t (:font "DejaVu Sans" :weight bold :height 1.5 :underline t :foreground "Forest Green"))))
+                        `(org-document-title ((t (:font "DejaVu Sans" :weight bold :height 1.75)))))
+#+end_src
+
 ** Python
 #+begin_src emacs-lisp
 (defun abell/python-mode-hook ()
@@ -275,34 +314,6 @@ is non-nil, call `f90-update-line' after inserting the continuation marker. Modi
  - To install the python LSP server, run
 #+begin_src sh :tangle no :eval no
 python -m pip install python-language-server[all]
-#+end_src
-
-** C++
-#+begin_src emacs-lisp
-(defun abell/cpp-mode-hook ()
-  (setq electric-pair-mode t)
-  (lsp 1)
-  )
-(add-hook 'c++-mode-hook 'abell/cpp-mode-hook)
-#+end_src
-
- - To install the C++ LSP server, run
-#+begin_src sh :tangle no :eval no
-sudo apt install clangd-9
-sudo update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-9 100
-#+end_src
-
-** Julia
-#+begin_src emacs-lisp
-(use-package julia-mode
-  :ensure t
-  )
-#+end_src
-
-** Emacs-Lisp
-#+begin_src emacs-lisp
-  (define-key emacs-lisp-mode-map (kbd "C-c C-a") 'eval-buffer)
-  (define-key emacs-lisp-mode-map (kbd "C-c C-r") 'eval-region)
 #+end_src
 
 ** TeX
