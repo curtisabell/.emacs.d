@@ -16,7 +16,7 @@
     )
   #+end_src
 
-* Emacs General Configuration
+* Emacs Default Configurations
 ** Sensible defaults
    #+begin_src emacs-lisp
    (load-file "~/.emacs.d/Code/sensible-defaults.el")
@@ -25,7 +25,7 @@
    (sensible-defaults/backup-to-temp-directory)
  #+end_src
 
-** Other Configurations
+** Misc Configurations
 *** Enable UTF-8 (unicode) support.
 #+begin_src emacs-lisp
   (set-language-environment "UTF-8")
@@ -115,11 +115,32 @@
 (setq-default major-mode 'org-mode)
 #+end_src
 
-* Major modes
+* Packages/Modes
 ** Calc
 #+begin_src emacs-lisp
 (setq calc-angle-mode 'rad  ; Use radians by default
       calc-symbolic-mode t) ; Keep things algebraic (e.g. sqrt(2))
+#+end_src
+
+** Company
+#+begin_src emacs-lisp
+(use-package company
+  :ensure t
+  :config
+  (setq company-idle-delay 0)
+  (setq company-minimum-prefix-length 3)
+
+  (global-company-mode t)
+  )
+#+end_src
+
+*** Company-box
+Adds icons to Company
+#+begin_src emacs-lisp
+(use-package company-box
+  :ensure t
+  :hook (company-mode . company-box-mode)
+)
 #+end_src
 
 ** C++
@@ -137,10 +158,106 @@ sudo apt install clangd-9
 sudo update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-9 100
 #+end_src
 
+** Dashboard
+#+begin_src emacs-lisp
+(defun abell/dashboard-banner ()
+  "Display current version of Emacs below the banner"
+  (setq dashboard-banner-logo-title
+        (format "Emacs %s" emacs-version)))
+
+(use-package dashboard
+  :ensure t
+  :init
+  (add-hook 'after-init-hook 'dashboard-refresh-buffer)
+  (add-hook 'dashboard-mode-hook 'abell/dashboard-banner)
+  :config
+  (setq dashboard-startup-banner 'logo)
+  (dashboard-setup-startup-hook)
+  (setq dashboard-items '((bookmarks  . 10)
+                          (recents . 10)
+					 (projects . 5)))
+  )
+#+end_src
+
+** Electric Operator
+Inserts spaces around operators, including James' additions to f90 mode.
+#+begin_src emacs-lisp
+(use-package electric-operator
+  :ensure t
+  :hook ((f90-mode python-mode latex-mode) . electric-operator-mode)
+  :config
+  (apply #'electric-operator-add-rules-for-mode 'f90-mode
+         (electric-operator-get-rules-for-mode 'prog-mode))
+  (electric-operator-add-rules-for-mode 'f90-mode
+                                        ;; ensure T/F are not treated as operators
+                                        (cons ".true." nil)
+                                        (cons ".false." nil)
+                                        (cons "=" 'electric-operator-f90-mode-=)
+                                        (cons "." 'electric-operator-f90-mode-generic-operator)
+                                        (cons "*" 'electric-operator-f90-mode-*)
+                                        (cons "/" 'electric-operator-f90-mode-/)
+                                        (cons "::" " :: ")
+                                        (cons "+" nil)
+                                        (cons "-" nil)
+                                        (cons "**" "**")
+                                        (cons "%" "%")
+                                        (cons "//" "//"))
+
+  (defun electric-operator-f90-mode-= ()
+    "Handle passing arguments to a function."
+    (cond
+     ((eq (electric-operator-enclosing-paren) ?\() "=")
+     (t " = ")))
+
+  (defun electric-operator-f90-mode-generic-operator()
+    "Treat .<var>. as an operator, otherwise treat '.' as a decimal"
+    (cond
+     ((electric-operator-just-inside-bracket) ".")
+     ((looking-back "\\.[[:alpha:]][[:alpha:][:digit:]_]*" nil)  ". ")
+     ((looking-back "[^[:digit:]+-]" nil) " .")
+     (t ".")))
+
+  (defun electric-operator-f90-mode-*()
+    "Handle write(*,*) and print *, cases"
+    (cond
+     ((electric-operator-just-inside-bracket) "*")
+     ((eq (char-before) ?\,) " *")
+     (t nil)))
+
+  (defun electric-operator-f90-mode-/()
+    "Handle (/ /) implicit array declaration"
+    (cond
+     ((electric-operator-just-inside-bracket) "/ ")
+     ((eq (electric-operator-character-after-paren) ?\/) " /")
+     (t nil)))
+
+  (defun electric-operator-character-after-paren()
+    "Return the character immediately after the opening brace of the current paren group"
+    (let ((ppss (syntax-ppss)))
+      (when (nth 1 ppss) (char-after (+ (nth 1 ppss) 1))))))
+#+end_src
+
 ** Emacs-Lisp
 #+begin_src emacs-lisp
   (define-key emacs-lisp-mode-map (kbd "C-c C-a") 'eval-buffer)
   (define-key emacs-lisp-mode-map (kbd "C-c C-r") 'eval-region)
+#+end_src
+
+** Flyspell
+#+begin_src emacs-lisp
+(use-package flyspell
+  :ensure t
+)
+#+end_src
+
+Enable flyspell for all text-modes.
+#+begin_src emacs-lisp
+;; (add-hook 'text-mode-hook 'turn-on-flyspell)
+#+end_src
+
+Enable flyspell for comments and strings in programming languages.
+#+begin_src emacs-lisp
+;; (add-hook 'prog-mode-hook 'flyspell-prog-mode)
 #+end_src
 
 ** f90
@@ -231,11 +348,49 @@ is non-nil, call `f90-update-line' after inserting the continuation marker. Modi
   (indent-according-to-mode))
 #+end_src
 
+** Helm
+#+begin_src emacs-lisp
+(use-package helm
+  :ensure t
+  :bind-keymap
+  :init
+  (helm-mode 1)
+  :config
+  (require 'helm-config)
+  (global-set-key (kbd "M-x") 'helm-M-x)
+  (global-set-key (kbd "C-x C-f") 'helm-find-files)
+  (global-set-key (kbd "C-x C-b") 'helm-buffers-list)
+  (global-set-key (kbd "C-x b") 'helm-mini)
+  ;; (setq helm-ff-skip-boring-files 0)
+  )
+#+end_src
+
+*** helm-spotify-plus
+#+begin_src emacs-lisp
+  (use-package helm-spotify-plus
+    :ensure helm
+    :bind-keymap
+    ("H-s H-n" . helm-spotify-plus-next)
+    ("H-s H-p" . helm-spotify-plus-previous)
+    ("H-s H-SPC" . helm-spotify-plus-toggle-play-pause)
+    )
+#+end_src
+
 ** Julia
 #+begin_src emacs-lisp
 (use-package julia-mode
   :ensure t
   )
+#+end_src
+
+** Linum
+#+begin_src emacs-lisp
+(require 'linum)
+(setq linum-disabled-modes-list '(eshell-mode wl-summary-mode
+					      compilation-mode text-mode dired-mode pdf-view-mode
+					      doc-view-mode shell-mode pdf-view-mode image-mode
+					      term-mode)
+)
 #+end_src
 
 ** LSP
@@ -244,6 +399,14 @@ is non-nil, call `f90-update-line' after inserting the continuation marker. Modi
   :ensure t
   :commands lsp
 )
+#+end_src
+
+** Magit
+#+begin_src emacs-lisp
+(use-package magit
+  :ensure t
+  :config
+  )
 #+end_src
 
 ** Org
@@ -300,6 +463,82 @@ is non-nil, call `f90-update-line' after inserting the continuation marker. Modi
                         `(org-document-title ((t (:font "DejaVu Sans" :weight bold :height 1.75)))))
 #+end_src
 
+** PDF tools
+#+begin_src emacs-lisp
+(use-package pdf-tools
+  :ensure t
+  )
+#+end_src
+
+Make =pdf-tools-install= only run the first time a pdf is opened.
+#+begin_src emacs-lisp
+(add-to-list 'auto-mode-alist '("\\.pdf\\'" . pdf-tools-install))
+(add-hook 'pdf-view-mode-hook
+          (lambda () (setq header-line-format nil)))
+#+end_src
+
+#+begin_src emacs-lisp
+(add-to-list 'auto-mode-alist '("\\.pdf\\'" . pdf-view-mode))
+;; make midnight mode colours nice
+(setq pdf-view-midnight-colors (cons (face-foreground 'default) (face-background 'default)))
+(defun my-pdf-view-mode-hook ()
+  (pdf-view-midnight-minor-mode 1)
+  (linum-mode 0)
+  )
+(add-hook 'pdf-view-mode-hook 'my-pdf-view-mode-hook)
+#+end_src
+
+Configuration to use pdf-view-mode with latex.
+#+begin_src emacs-lisp
+(setq TeX-view-program-selection '((output-pdf "PDF Tools"))
+      TeX-view-program-list '(("PDF Tools" TeX-pdf-tools-sync-view))
+      TeX-source-correlate-start-server t) ;; not sure if last line is neccessary
+
+;; to have the buffer refresh after compilation
+(add-hook 'TeX-after-compilation-finished-functions
+          #'TeX-revert-document-buffer)
+#+end_src
+
+** Popper
+#+begin_src emacs-lisp
+(use-package popper
+  :ensure t
+  :bind
+  (("C-`"   . popper-toggle-latest)
+   ("C-~"   . popper-cycle)
+   ("C-M-`" . popper-toggle-type))
+  :init
+  (setq popper-reference-buffers
+        '("Output\\*$"
+          help-mode
+          compilation-mode
+          "\\*ansi-term\\*"
+          "\\*Packages\\*"))
+  (popper-mode 1)
+)
+#+end_src
+
+** Projectile
+#+begin_src emacs-lisp
+(use-package projectile
+  :ensure t
+  :bind-keymap
+  ("C-c p" . projectile-command-map)
+  :init
+  :config
+  )
+#+end_src
+
+*** helm-projectile
+#+begin_src emacs-lisp
+(use-package helm-projectile
+  :ensure t
+  :init
+  (helm-projectile-on)
+  :config
+  )
+#+end_src
+
 ** Python
 #+begin_src emacs-lisp
 (defun abell/python-mode-hook ()
@@ -314,6 +553,58 @@ is non-nil, call `f90-update-line' after inserting the continuation marker. Modi
  - To install the python LSP server, run
 #+begin_src sh :tangle no :eval no
 python -m pip install python-language-server[all]
+#+end_src
+
+** Simpleclip
+#+begin_src emacs-lisp
+(use-package simpleclip
+  :ensure t
+  :init
+  (simpleclip-mode 1)
+  :config
+  (global-set-key (kbd "H-x") 'simpleclip-cut)
+  (global-set-key (kbd "H-c") 'simpleclip-copy)
+  (global-set-key (kbd "H-v") 'simpleclip-paste)
+  )
+#+end_src
+
+** Spaceline
+#+begin_src emacs-lisp
+(use-package spaceline
+  :ensure t
+  :config
+  (setq-default mode-line-format '("%e" (:eval (spaceline-ml-main))))
+)
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package spaceline-config
+  :ensure spaceline
+  :config
+  (spaceline-helm-mode 1)
+  (spaceline-install
+   'main
+   '((buffer-modified)
+     ((remote-host buffer-id) :face highlight-face)
+     (process :when active))
+   '((selection-info :face 'region :when mark-active)
+     ((flycheck-error flycheck-warning flycheck-info) :when active)
+     (which-function)
+     (version-control :when active)
+     (line-column)
+     (global :when active)
+     (major-mode)))
+  )
+#+end_src
+
+#+begin_src emacs-lisp
+(setq-default
+ powerline-height 24
+ powerline-default-separator 'wave
+ spaceline-flycheck-bullet "❖ %s"
+ spaceline-separator-dir-left '(right . right)
+ spaceline-separator-dir-right '(left . left)
+ )
 #+end_src
 
 ** TeX
@@ -406,105 +697,6 @@ cargo install --git https://github.com/latex-lsp/texlab.git
     )
 #+end_src
 
-* Packages
-** Helm
-#+begin_src emacs-lisp
-(use-package helm
-  :ensure t
-  :bind-keymap
-  :init
-  (helm-mode 1)
-  :config
-  (require 'helm-config)
-  (global-set-key (kbd "M-x") 'helm-M-x)
-  (global-set-key (kbd "C-x C-f") 'helm-find-files)
-  (global-set-key (kbd "C-x C-b") 'helm-buffers-list)
-  (global-set-key (kbd "C-x b") 'helm-mini)
-  ;; (setq helm-ff-skip-boring-files 0)
-  )
-#+end_src
-
-*** helm-spotify-plus
-#+begin_src emacs-lisp
-  (use-package helm-spotify-plus
-    :ensure helm
-    :bind-keymap
-    ("H-s H-n" . helm-spotify-plus-next)
-    ("H-s H-p" . helm-spotify-plus-previous)
-    ("H-s H-SPC" . helm-spotify-plus-toggle-play-pause)
-    )
-#+end_src
-
-** Linum
-#+begin_src emacs-lisp
-(require 'linum)
-(setq linum-disabled-modes-list '(eshell-mode wl-summary-mode
-					      compilation-mode text-mode dired-mode pdf-view-mode
-					      doc-view-mode shell-mode pdf-view-mode image-mode
-					      term-mode)
-)
-#+end_src
-
-** Projectile
-#+begin_src emacs-lisp
-(use-package projectile
-  :ensure t
-  :bind-keymap
-  ("C-c p" . projectile-command-map)
-  :init
-  :config
-  )
-#+end_src
-
-*** helm-projectile
-#+begin_src emacs-lisp
-(use-package helm-projectile
-  :ensure t
-  :init
-  (helm-projectile-on)
-  :config
-  )
-#+end_src
-
-** Spaceline
-#+begin_src emacs-lisp
-(use-package spaceline
-  :ensure t
-  :config
-  (setq-default mode-line-format '("%e" (:eval (spaceline-ml-main))))
-)
-#+end_src
-
-#+begin_src emacs-lisp
-(use-package spaceline-config
-  :ensure spaceline
-  :config
-  (spaceline-helm-mode 1)
-  (spaceline-install
-   'main
-   '((buffer-modified)
-     ((remote-host buffer-id) :face highlight-face)
-     (process :when active))
-   '((selection-info :face 'region :when mark-active)
-     ((flycheck-error flycheck-warning flycheck-info) :when active)
-     (which-function)
-     (version-control :when active)
-     (line-column)
-     (global :when active)
-     (major-mode)))
-  )
-#+end_src
-
-#+begin_src emacs-lisp
-(setq-default
- powerline-height 24
- powerline-default-separator 'wave
- spaceline-flycheck-bullet "❖ %s"
- spaceline-separator-dir-left '(right . right)
- spaceline-separator-dir-right '(left . left)
- )
-#+end_src
-
 ** Yasnippet
 #+begin_src emacs-lisp
 (use-package yasnippet
@@ -518,201 +710,13 @@ cargo install --git https://github.com/latex-lsp/texlab.git
   )
 #+end_src
 
-** Simpleclip
-#+begin_src emacs-lisp
-(use-package simpleclip
-  :ensure t
-  :init
-  (simpleclip-mode 1)
-  :config
-  (global-set-key (kbd "H-x") 'simpleclip-cut)
-  (global-set-key (kbd "H-c") 'simpleclip-copy)
-  (global-set-key (kbd "H-v") 'simpleclip-paste)
-  )
-#+end_src
 
-** PDF tools
-#+begin_src emacs-lisp
-(use-package pdf-tools
-  :ensure t
-  )
-#+end_src
 
-Make =pdf-tools-install= only run the first time a pdf is opened.
-#+begin_src emacs-lisp
-(add-to-list 'auto-mode-alist '("\\.pdf\\'" . pdf-tools-install))
-(add-hook 'pdf-view-mode-hook
-          (lambda () (setq header-line-format nil)))
-#+end_src
 
-#+begin_src emacs-lisp
-(add-to-list 'auto-mode-alist '("\\.pdf\\'" . pdf-view-mode))
-;; make midnight mode colours nice
-(setq pdf-view-midnight-colors (cons (face-foreground 'default) (face-background 'default)))
-(defun my-pdf-view-mode-hook ()
-  (pdf-view-midnight-minor-mode 1)
-  (linum-mode 0)
-  )
-(add-hook 'pdf-view-mode-hook 'my-pdf-view-mode-hook)
-#+end_src
 
-Configuration to use pdf-view-mode with latex.
-#+begin_src emacs-lisp
-(setq TeX-view-program-selection '((output-pdf "PDF Tools"))
-      TeX-view-program-list '(("PDF Tools" TeX-pdf-tools-sync-view))
-      TeX-source-correlate-start-server t) ;; not sure if last line is neccessary
-
-;; to have the buffer refresh after compilation
-(add-hook 'TeX-after-compilation-finished-functions
-          #'TeX-revert-document-buffer)
-#+end_src
-
-** Flyspell
-#+begin_src emacs-lisp
-(use-package flyspell
-  :ensure t
-)
-#+end_src
-
-Enable flyspell for all text-modes.
-#+begin_src emacs-lisp
-;; (add-hook 'text-mode-hook 'turn-on-flyspell)
-#+end_src
-
-Enable flyspell for comments and strings in programming languages.
-#+begin_src emacs-lisp
-;; (add-hook 'prog-mode-hook 'flyspell-prog-mode)
-#+end_src
-
-** Company
-#+begin_src emacs-lisp
-(use-package company
-  :ensure t
-  :config
-  (setq company-idle-delay 0)
-  (setq company-minimum-prefix-length 3)
-
-  (global-company-mode t)
-  )
-#+end_src
-
-*** Company-box
-Adds icons to Company
-#+begin_src emacs-lisp
-(use-package company-box
-  :ensure t
-  :hook (company-mode . company-box-mode)
-)
-#+end_src
-
-** Magit
-#+begin_src emacs-lisp
-(use-package magit
-  :ensure t
-  :config
-  )
-#+end_src
-
-** Dashboard
-#+begin_src emacs-lisp
-(defun abell/dashboard-banner ()
-  "Display current version of Emacs below the banner"
-  (setq dashboard-banner-logo-title
-        (format "Emacs %s" emacs-version)))
-
-(use-package dashboard
-  :ensure t
-  :init
-  (add-hook 'after-init-hook 'dashboard-refresh-buffer)
-  (add-hook 'dashboard-mode-hook 'abell/dashboard-banner)
-  :config
-  (setq dashboard-startup-banner 'logo)
-  (dashboard-setup-startup-hook)
-  (setq dashboard-items '((bookmarks  . 10)
-                          (recents . 10)
-					 (projects . 5)))
-  )
-#+end_src
-
-** Electric Operator
-Inserts spaces around operators, including James' additions to f90 mode.
-#+begin_src emacs-lisp
-(use-package electric-operator
-  :ensure t
-  :hook ((f90-mode python-mode latex-mode) . electric-operator-mode)
-  :config
-  (apply #'electric-operator-add-rules-for-mode 'f90-mode
-         (electric-operator-get-rules-for-mode 'prog-mode))
-  (electric-operator-add-rules-for-mode 'f90-mode
-                                        ;; ensure T/F are not treated as operators
-                                        (cons ".true." nil)
-                                        (cons ".false." nil)
-                                        (cons "=" 'electric-operator-f90-mode-=)
-                                        (cons "." 'electric-operator-f90-mode-generic-operator)
-                                        (cons "*" 'electric-operator-f90-mode-*)
-                                        (cons "/" 'electric-operator-f90-mode-/)
-                                        (cons "::" " :: ")
-                                        (cons "+" nil)
-                                        (cons "-" nil)
-                                        (cons "**" "**")
-                                        (cons "%" "%")
-                                        (cons "//" "//"))
-
-  (defun electric-operator-f90-mode-= ()
-    "Handle passing arguments to a function."
-    (cond
-     ((eq (electric-operator-enclosing-paren) ?\() "=")
-     (t " = ")))
-
-  (defun electric-operator-f90-mode-generic-operator()
-    "Treat .<var>. as an operator, otherwise treat '.' as a decimal"
-    (cond
-     ((electric-operator-just-inside-bracket) ".")
-     ((looking-back "\\.[[:alpha:]][[:alpha:][:digit:]_]*" nil)  ". ")
-     ((looking-back "[^[:digit:]+-]" nil) " .")
-     (t ".")))
-
-  (defun electric-operator-f90-mode-*()
-    "Handle write(*,*) and print *, cases"
-    (cond
-     ((electric-operator-just-inside-bracket) "*")
-     ((eq (char-before) ?\,) " *")
-     (t nil)))
-
-  (defun electric-operator-f90-mode-/()
-    "Handle (/ /) implicit array declaration"
-    (cond
-     ((electric-operator-just-inside-bracket) "/ ")
-     ((eq (electric-operator-character-after-paren) ?\/) " /")
-     (t nil)))
-
-  (defun electric-operator-character-after-paren()
-    "Return the character immediately after the opening brace of the current paren group"
-    (let ((ppss (syntax-ppss)))
-      (when (nth 1 ppss) (char-after (+ (nth 1 ppss) 1))))))
-#+end_src
-
-** Popper
-#+begin_src emacs-lisp
-(use-package popper
-  :ensure t
-  :bind
-  (("C-`"   . popper-toggle-latest)
-   ("C-~"   . popper-cycle)
-   ("C-M-`" . popper-toggle-type))
-  :init
-  (setq popper-reference-buffers
-        '("Output\\*$"
-          help-mode
-          compilation-mode
-          "\\*ansi-term\\*"
-          "\\*Packages\\*"))
-  (popper-mode 1)
-)
-#+end_src
-
-* Misc Functions
-** Yank to a newline
+* Misc
+** Functions
+*** Yank to a newline
 #+begin_src emacs-lisp
 (defun abell/newline-yank ()
   (interactive)
@@ -722,7 +726,7 @@ Inserts spaces around operators, including James' additions to f90 mode.
 (global-set-key (kbd "<C-return>") 'abell/newline-yank)
 #+end_src
 
-** Display current buffer filename
+*** Display current buffer filename
 #+begin_src emacs-lisp
 (defun abell/view-buffer-name ()
   "Display the filename of the current buffer."
@@ -731,12 +735,12 @@ Inserts spaces around operators, including James' additions to f90 mode.
 (global-set-key (kbd "H-b") 'abell/view-buffer-name)
 #+end_src
 
-** Copy current buffer filename to kill ring
+*** Copy current buffer filename to kill ring
 #+begin_src emacs-lisp
 (global-set-key (kbd "C-H-b") (lambda () (interactive) (kill-new (buffer-file-name))))
 #+end_src
 
-** Swapping lines being commented above and below
+*** Swapping lines being commented above and below
 #+begin_src emacs-lisp
 (defun abell/comment-swap-above ()
   "Comments out the current line, and uncomments the line above"
@@ -757,7 +761,7 @@ Inserts spaces around operators, including James' additions to f90 mode.
 (global-set-key (kbd "H-M-<down>") 'abell/comment-swap-below)
 #+end_src
 
-** Insert a comment header in each language
+*** Insert a comment header in each language
 #+begin_src emacs-lisp
 (defun abell/general-comment-header (title)
   "Inserts a commented title"
@@ -778,7 +782,7 @@ Inserts spaces around operators, including James' additions to f90 mode.
 (global-set-key (kbd "H-h") 'abell/general-comment-header)
 #+end_src
 
-** Change between vertical and horizontal windows splitting
+*** Change between vertical and horizontal windows splitting
 #+begin_src emacs-lisp
 (defun my/window-split-toggle ()
   "Toggle between horizontal and vertical split with two windows."
@@ -797,7 +801,7 @@ Inserts spaces around operators, including James' additions to f90 mode.
   (global-set-key (kbd "H-f") 'my/window-split-toggle)
 #+end_src
 
-** Quick access to this file
+*** Quick access to this file
 #+begin_src emacs-lisp
 (defun abell/visit-emacs-config ()
   (interactive)
@@ -810,7 +814,7 @@ Inserts spaces around operators, including James' additions to f90 mode.
 (global-set-key (kbd "C-c M-e") 'abell/visit-emacs-config-other-window)
 #+end_src
 
-** Quick access to bashrc
+*** Quick access to bashrc
 #+begin_src emacs-lisp
 (defun abell/visit-bashrc ()
   (interactive)
@@ -822,7 +826,7 @@ Inserts spaces around operators, including James' additions to f90 mode.
 (global-set-key (kbd "C-c b") 'abell/visit-bashrc)
 #+end_src
 
-** Move lines up and down
+*** Move lines up and down
 #+begin_src emacs-lisp
 (defun abell/move-line-up ()
   (interactive)
@@ -838,7 +842,7 @@ Inserts spaces around operators, including James' additions to f90 mode.
 (global-set-key (kbd "M-<down>") 'abell/move-line-down)
 #+end_src
 
-** Duplicate current line
+*** Duplicate current line
 #+begin_src emacs-lisp
 (defun duplicate-current-line-or-region (arg)
   "Duplicates the current line or region ARG times."
@@ -860,7 +864,7 @@ Inserts spaces around operators, including James' additions to f90 mode.
 (global-set-key (kbd "H-d") 'duplicate-current-line-or-region)
 #+end_src
 
-** Kill buffer and frame
+*** Kill buffer and frame
 #+begin_src emacs-lisp
 (defun abell/kill-buffer-and-frame ()
   (interactive)
@@ -869,14 +873,14 @@ Inserts spaces around operators, including James' additions to f90 mode.
 (global-set-key (kbd "C-x 5 k") 'abell/kill-buffer-and-frame)
 #+end_src
 
-** Run python3 in this buffer
+*** Run python3 in this buffer
 #+begin_src emacs-lisp
 (defun abell/run-python3 ()
   (interactive)
   (let ((buf (ansi-term "/usr/bin/python3")))))
 #+end_src
 
-** Open/close terminal in other window
+*** Open/close terminal in other window
 #+begin_src emacs-lisp
 (defun abell/open-term-other-window ()
   (interactive)
@@ -902,7 +906,7 @@ Inserts spaces around operators, including James' additions to f90 mode.
 (global-set-key (kbd "H-M-t") 'abell/open-term-close-window)
 #+end_src
 
-** Increment/decrement numbers
+*** Increment/decrement numbers
 #+begin_src emacs-lisp
 (defun my-increment-number-decimal (&optional arg)
   "Increment the number forward from point by 'arg'."
@@ -928,7 +932,6 @@ Inserts spaces around operators, including James' additions to f90 mode.
 (global-set-key (kbd "C-c d") 'my-decrement-number-decimal)
 #+end_src
 
-* Misc
 ** Keybindings
 #+begin_src emacs-lisp
 (global-set-key (kbd "M-n") 'forward-paragraph)
@@ -939,9 +942,9 @@ Inserts spaces around operators, including James' additions to f90 mode.
 (global-set-key (kbd "<menu>") 'shell-command)
 #+end_src
 
-** Code marking
+*** Code marking
 #+begin_src emacs-lisp
-(global-set-key (kbd "C-c n") (lambda () (interactive) (insert-char 10008))) ; ✘
+(global-set-key (kbd "H-n") (lambda () (interactive) (insert-char 10008))) ; ✘
 (global-set-key (kbd "H-y") (lambda () (interactive) (insert-char 10004))) ; ✔
 (global-set-key (kbd "C-H-y") (lambda () (interactive) (count-matches "✔" 0 nil t))) ; Count ✔
 #+end_src
@@ -952,7 +955,8 @@ Inserts spaces around operators, including James' additions to f90 mode.
       user-mail-address "curtis.abell@adelaide.com")
 #+end_src
 
-* Unimplemented
+* Plans
 ** shackle.el
  - Used to manipulate how buffers pop up, recommended for popper mode.
  - https://depp.brause.cc/shackle/
+** Evil mode
