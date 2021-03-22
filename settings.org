@@ -1,10 +1,12 @@
-* Theme settings
+* GUI/Terminal Settings
   #+begin_src emacs-lisp
   (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
   (if (display-graphic-p)
       (progn
         ;; If in a graphical display
-        (load-theme 'abell-dark t))
+        (load-theme 'abell-dark t)
+        (add-to-list 'default-frame-alist '(fullscreen . maximized))
+        (global-linum-mode t))
     ;; If in terminal emacs, potentially choose different theme
     (load-theme 'abell-dark t)
     ;; James' fixes from cphys .emacs for the terminal
@@ -25,10 +27,10 @@
 
 ** GUI-specific
 #+begin_src emacs-lisp
-(when (display-graphic-p)
-  (add-to-list 'default-frame-alist '(fullscreen . maximized))
-  (global-linum-mode t)
-  )
+;; (when (display-graphic-p)
+;;   (add-to-list 'default-frame-alist '(fullscreen . maximized))
+;;   (global-linum-mode t)
+;;   )
 #+end_src
 
 ** Other Configurations
@@ -56,7 +58,7 @@
   (scroll-bar-mode -1))
 #+end_src
 
-*** Disabled warning bell
+*** Disable warning bell
 #+begin_src emacs-lisp
 (setq ring-bell-function 'ignore)
 #+end_src
@@ -132,7 +134,7 @@
     (flyspell-mode 1)
     (setq org-src-fontify-natively t
           org-src-tab-acts-natively t
-          org-confirm-babel-evahhluate nil
+          org-confirm-babel-evaluate nil
           org-edit-src-content-indentation 0)
     (setq org-hide-emphasis-markers t)
     (local-set-key (kbd "C-c m") 'TeX-inline-math-abell)
@@ -189,6 +191,7 @@
   (turn-on-font-lock)                   ; syntax highlighting
   (auto-fill-mode 0)                    ; turn off auto-filling
   (lsp 1)                               ; enable lsp-mode
+  (setq electric-pair-mode t)
   (local-set-key (kbd "H-M-h") 'abell/f90-comment-header-block)
   (local-set-key (kbd "C-c RET") 'abell/f90-break-line)
   )
@@ -622,9 +625,9 @@ Adds icons to Company
   :config
   (setq dashboard-startup-banner 'logo)
   (dashboard-setup-startup-hook)
-  (setq dashboard-items '((bookmarks  . 5)
-                          (recents . 5)
-					 (projects . 20)))
+  (setq dashboard-items '((bookmarks  . 10)
+                          (recents . 10)
+					 (projects . 5)))
   )
 #+end_src
 
@@ -646,6 +649,8 @@ Inserts spaces around operators, including James' additions to f90 mode.
                                         (cons "*" 'electric-operator-f90-mode-*)
                                         (cons "/" 'electric-operator-f90-mode-/)
                                         (cons "::" " :: ")
+                                        (cons "+" nil)
+                                        (cons "-" nil)
                                         (cons "**" "**")
                                         (cons "%" "%")
                                         (cons "//" "//"))
@@ -669,14 +674,14 @@ Inserts spaces around operators, including James' additions to f90 mode.
     (cond
      ((electric-operator-just-inside-bracket) "*")
      ((eq (char-before) ?\,) " *")
-     (t " * ")))
+     (t nil)))
 
   (defun electric-operator-f90-mode-/()
     "Handle (/ /) implicit array declaration"
     (cond
      ((electric-operator-just-inside-bracket) "/ ")
      ((eq (electric-operator-character-after-paren) ?\/) " /")
-     (t " / ")))
+     (t nil)))
 
   (defun electric-operator-character-after-paren()
     "Return the character immediately after the opening brace of the current paren group"
@@ -697,7 +702,8 @@ Inserts spaces around operators, including James' additions to f90 mode.
         '("Output\\*$"
           help-mode
           compilation-mode
-          "\\*ansi-term\\*"))
+          "\\*ansi-term\\*"
+          "\\*Packages\\*"))
   (popper-mode 1)
 )
 #+end_src
