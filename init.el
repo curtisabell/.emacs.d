@@ -11,14 +11,18 @@
         ("gnu" . 1)
 	("org" . 0))
       )
-(require 'use-package)
+
+;; -----------------Install use-package if necessary-----------------
+(when (not (package-installed-p 'use-package))
+  (package-refresh-contents)
+  (package-install 'use-package))
+
 
 ;; ---------------Load emacs configurations using babel--------------
 (require 'org)
 (org-babel-load-file
  (expand-file-name "settings.org"
                    user-emacs-directory))
-
 
 
 ;; ---------------------Automatically added stuff--------------------
