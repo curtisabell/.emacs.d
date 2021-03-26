@@ -361,6 +361,7 @@ is non-nil, call `f90-update-line' after inserting the continuation marker. Modi
   (global-set-key (kbd "C-x C-f") 'helm-find-files)
   (global-set-key (kbd "C-x C-b") 'helm-buffers-list)
   (global-set-key (kbd "C-x b") 'helm-mini)
+  (global-set-key (kbd "M-y") 'helm-show-kill-ring)
   ;; (setq helm-ff-skip-boring-files 0)
   )
 #+end_src
@@ -499,6 +500,8 @@ Configuration to use pdf-view-mode with latex.
           #'TeX-revert-document-buffer)
 #+end_src
 
+Note: need to run =pdf-tools-install= the first time PDF-tools is installed.
+
 ** Popper
 #+begin_src emacs-lisp
 (use-package popper
@@ -608,6 +611,13 @@ python -m pip install python-language-server[all]
 #+end_src
 
 ** TeX
+For some reason I can't get =auctex= to work with use-package.
+#+begin_src emacs-lisp
+(when (not (package-installed-p 'auctex))
+  (package-refresh-contents)
+  (package-install 'use-package))
+#+end_src
+
 #+begin_src emacs-lisp
 (defun my-LaTeX-mode-hook ()
   (setq TeX-auto-save t)
