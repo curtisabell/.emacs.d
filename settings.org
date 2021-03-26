@@ -516,7 +516,9 @@ Note: need to run =pdf-tools-install= the first time PDF-tools is installed.
           help-mode
           compilation-mode
           "\\*ansi-term\\*"
-          "\\*Packages\\*"))
+          "\\*Packages\\*"
+	      "\\*Calculator\\*")
+	)
   (popper-mode 1)
 )
 #+end_src
