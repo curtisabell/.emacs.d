@@ -12,3 +12,4 @@
 !themes/*
 !init.el
 !settings.org
+custom.el
