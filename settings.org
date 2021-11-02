@@ -110,11 +110,6 @@
 (fset 'yes-or-no-p 'y-or-n-p)
 #+end_src
 
-*** Set default buffer mode to Org mode
-#+begin_src emacs-lisp
-(setq-default major-mode 'org-mode)
-#+end_src
-
 * Packages/Modes
 ** Calc
 #+begin_src emacs-lisp
@@ -524,7 +519,9 @@ Note: need to run =pdf-tools-install= the first time PDF-tools is installed.
           help-mode
           compilation-mode
           "\\*ansi-term\\*"
-          "\\*Packages\\*"))
+          "\\*Packages\\*"
+	      "\\*Calculator\\*")
+	)
   (popper-mode 1)
 )
 #+end_src
@@ -994,9 +991,6 @@ cargo install --git https://github.com/latex-lsp/texlab.git
 #+end_src
 
 * Plans
-** shackle.el
- - Used to manipulate how buffers pop up, recommended for popper mode.
- - https://depp.brause.cc/shackle/
 ** Evil mode
 ** Whiteroom mode
  - Has nice centering, might be good for org mode.
