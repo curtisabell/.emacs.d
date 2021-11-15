@@ -123,7 +123,7 @@
   :ensure t
   :config
   (setq company-idle-delay 0)
-  (setq company-minimum-prefix-length 3)
+  (setq company-minimum-prefix-length 6)
 
   (global-company-mode t)
   )
@@ -150,6 +150,8 @@ Adds icons to Company
 (defun abell/cpp-mode-hook ()
   (setq electric-pair-mode t)
   (lsp 1)
+  (tree-sitter-mode 1)
+  (tree-sitter-hl-mode 1)
   )
 (add-hook 'c++-mode-hook 'abell/cpp-mode-hook)
 #+end_src
@@ -186,7 +188,7 @@ Inserts spaces around operators, including James' additions to f90 mode.
 #+begin_src emacs-lisp
 (use-package electric-operator
   :ensure t
-  :hook ((f90-mode) . electric-operator-mode)
+  ;; :hook ((f90-mode) . electric-operator-mode)
   ;; :hook ((f90-mode python-mode latex-mode) . electric-operator-mode)
   :config
   (apply #'electric-operator-add-rules-for-mode 'f90-mode
@@ -253,16 +255,6 @@ Inserts spaces around operators, including James' additions to f90 mode.
 )
 #+end_src
 
-Enable flyspell for all text-modes.
-#+begin_src emacs-lisp
-;; (add-hook 'text-mode-hook 'turn-on-flyspell)
-#+end_src
-
-Enable flyspell for comments and strings in programming languages.
-#+begin_src emacs-lisp
-;; (add-hook 'prog-mode-hook 'flyspell-prog-mode)
-#+end_src
-
 ** f90
 #+begin_src emacs-lisp
 (defun my-f90-mode-hook ()
@@ -273,9 +265,15 @@ Enable flyspell for comments and strings in programming languages.
   (turn-on-font-lock)                   ; syntax highlighting
   (auto-fill-mode 0)                    ; turn off auto-filling
   (lsp 1)                               ; enable lsp-mode
-  (setq electric-pair-mode t)
+  (electric-pair-mode 1)
   (local-set-key (kbd "H-M-h") 'abell/f90-comment-header-block)
   (local-set-key (kbd "C-c RET") 'abell/f90-break-line)
+
+  (setq f89-do-indent 4) ; def 3
+  (setq f90-if-indent 4) ; def 3
+  (setq f90-type-indent 4) ; def 3
+  (setq f90-program-indent 4) ; def 2
+  (setq f90-continuation-indent 4) ; def 5
   )
 (add-hook 'f90-mode-hook 'my-f90-mode-hook)
 #+end_src
@@ -329,7 +327,8 @@ python3 -m pip install fortran-language-server
 (defun abell/f90-break-line (&optional no-update)
   "Break line at point, insert continuation marker(s) and indent.
 Unless in a string or comment, or if the optional argument NO-UPDATE
-is non-nil, call `f90-update-line' after inserting the continuation marker. Modified to have some extra whitespace before/after the ampersand. Copied from f90.el"
+is non-nil, call `f90-update-line' after inserting the continuation marker.
+Modified to have some extra whitespace before/after the ampersand. Copied from f90.el"
   (interactive "*P")
   (cond
    ((f90-in-string)
@@ -434,6 +433,14 @@ is non-nil, call `f90-update-line' after inserting the continuation marker. Modi
     (local-set-key (kbd "C-c m") 'TeX-inline-math-abell)
     )
 (add-hook 'org-mode-hook 'my-org-mode-hook)
+#+end_src
+
+*** Languages for evaluation
+#+begin_src emacs-lisp
+;; (org-babel-do-load-languages
+;;  'org-babel-load-languages
+;;  '((emacs-lisp . t)
+;;    (sh . t)))
 #+end_src
 
 *** Change dashes to bullets in lists
@@ -550,10 +557,12 @@ Note: need to run =pdf-tools-install= the first time PDF-tools is installed.
 ** Python
 #+begin_src emacs-lisp
 (defun abell/python-mode-hook ()
-  (setq electric-pair-mode t)
+  (electric-pair-mode 1)
   ;; (lsp 1)
   ;; (setq lsp-restart 'auto-restart)
   (setq lsp-restart 'ignore)
+  (tree-sitter-mode 1)
+  (tree-sitter-hl-mode 1)
   )
 (add-hook 'python-mode-hook 'abell/python-mode-hook)
 #+end_src
@@ -563,15 +572,16 @@ Note: need to run =pdf-tools-install= the first time PDF-tools is installed.
 python -m pip install python-language-server[all]
 #+end_src
 
-*** f-string highlighting
-#+begin_src emacs-lisp
+*** python f-string highlighting
+Disabled since tree-sitter is now installed
+#+begin_src emacs-lisp :tangle no :eval no
 (defconst brace-regexp
   "[^{]{[^{}]*}")
 (defconst python-f-string-regexp
   "f\\('.*?[^\\]'\\|\".*?[^\\]\"\\)")
 (defun python-f-string-font-lock-find (limit)
   (while (re-search-forward python-f-string-regexp limit t)
-    (put-text-property (match-beginning 0) (match-end 0)
+    (put-text-property (match-beginning 1) (match-end 0) ; match-beginning 0 for 'f' colouring
                        'face 'font-lock-string-face)
     (let ((start (match-beginning 0)))
       (while (re-search-backward brace-regexp start t)
@@ -735,6 +745,19 @@ cargo install --git https://github.com/latex-lsp/texlab.git
     )
 #+end_src
 
+** tree-sitter
+#+begin_src emacs-lisp
+(use-package tree-sitter
+  :ensure t
+  )
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package tree-sitter-langs
+  :ensure t
+  )
+#+end_src
+
 ** Yasnippet
 #+begin_src emacs-lisp
 (use-package yasnippet
@@ -744,7 +767,7 @@ cargo install --git https://github.com/latex-lsp/texlab.git
   :config
   (setq yas-snippet-dirs '("~/.emacs.d/snippets"))
   (setq yas-indent-line 'fixed)
-  (define-key yas-minor-mode-map (kbd "SPC") yas-maybe-expand)
+  (define-key yas-minor-mode-map (kbd "TAB") yas-maybe-expand)
   )
 #+end_src
 
@@ -857,7 +880,7 @@ cargo install --git https://github.com/latex-lsp/texlab.git
     (find-file "~/.bashrc")
     )
   )
-(global-set-key (kbd "C-c b") 'abell/visit-bashrc)
+(global-set-key (kbd "C-c H-b") 'abell/visit-bashrc)
 #+end_src
 
 *** Move lines up and down
@@ -974,7 +997,7 @@ cargo install --git https://github.com/latex-lsp/texlab.git
 (global-set-key (kbd "M-[") 'other-window)
 (global-set-key (kbd "C-x 4 k") 'kill-buffer-and-window)
 (global-set-key (kbd "<menu>") 'shell-command)
-(global-set-key (kbd "C-c v") 'visual-line-mode)
+(global-set-key (kbd "C-c v") 'toggle-truncate-lines)
 #+end_src
 
 *** Code marking
@@ -989,8 +1012,3 @@ cargo install --git https://github.com/latex-lsp/texlab.git
 (setq user-full-name "Curtis Abell"
       user-mail-address "curtis.abell@adelaide.com")
 #+end_src
-
-* Plans
-** Evil mode
-** Whiteroom mode
- - Has nice centering, might be good for org mode.

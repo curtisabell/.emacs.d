@@ -1,16 +1,29 @@
 #!/usr/bin/python3
-import matplotlib.pyplot as pypl
 import numpy as np
 from pylab import *
+import matplotlib.style
+import matplotlib.pyplot as pypl
+from matplotlib.ticker import AutoMinorLocator
 from matplotlib import rc
 import math
 
 pypl.style.use('classic')
+pypl.rcParams['axes.formatter.useoffset'] = False
 pypl.rc('font', size=18, **{'family': 'serif', 'serif': ['Computer Modern']})
 pypl.rc('text', usetex=True)
-
 fig, ax = pypl.subplots()
 
+
 $0
+
+
+# xtickloc = []
+# pypl.xticks(xtickloc)
+ax.xaxis.set_minor_locator(AutoMinorLocator())
+ax.yaxis.set_minor_locator(AutoMinorLocator())
+pypl.tick_params(axis='y', which='major', width=1, length=10, color='black')
+pypl.tick_params(axis='x', which='major', width=1, length=10, color='black')
+pypl.tick_params(axis='y', which='minor', width=1, length=4,  color='black', direction='in', bottom='on')
+pypl.tick_params(axis='x', which='minor', width=1, length=4,  color='black', direction='in', top='on')
 
 pypl.show()

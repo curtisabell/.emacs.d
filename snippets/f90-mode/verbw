@@ -1,0 +1,1 @@
+if (verbose) write(*,*) $0
