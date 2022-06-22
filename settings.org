@@ -6,7 +6,7 @@
         ;; If in a graphical display
         (load-theme 'abell-dark t)
         (add-to-list 'default-frame-alist '(fullscreen . maximized))
-        (global-linum-mode t))
+        (global-display-line-numbers-mode t))
     ;; If in terminal emacs, potentially choose different theme
     (load-theme 'abell-dark t)
     ;; James' fixes from cphys .emacs for the terminal
@@ -72,6 +72,7 @@
 *** Enable disabled commands
 #+begin_src emacs-lisp
 (put 'narrow-to-region 'disabled nil)
+(put 'downcase-region 'disabled nil)
 #+end_src
 
 *** Disable startup screen
@@ -111,6 +112,13 @@
 #+end_src
 
 * Packages/Modes
+** 2048
+#+begin_src emacs-lisp
+(use-package 2048-game
+  :ensure t
+  )
+#+end_src
+
 ** Calc
 #+begin_src emacs-lisp
 (setq calc-angle-mode 'rad  ; Use radians by default
@@ -183,13 +191,32 @@ sudo update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-9 100
   )
 #+end_src
 
+** Display Line Numbers Mode
+Better performing linum-mode
+#+begin_src emacs-lisp
+(use-package display-line-numbers
+  :commands display-line-numbers-mode
+  :hook
+  ((eshell-mode wl-summary-mode
+		compilation-mode text-mode
+		dired-mode pdf-view-mode
+		doc-view-mode shell-mode
+		pdf-view-mode image-mode
+		term-mode) . (lambda () (interactive) (display-line-numbers-mode nil)))
+  :bind-keymap
+  :init
+  :config
+  )
+#+end_src
+
 ** Electric Operator
 Inserts spaces around operators, including James' additions to f90 mode.
 #+begin_src emacs-lisp
 (use-package electric-operator
   :ensure t
-  ;; :hook ((f90-mode) . electric-operator-mode)
-  ;; :hook ((f90-mode python-mode latex-mode) . electric-operator-mode)
+  ;; :hook
+  ;; ((f90-mode) . electric-operator-mode)
+  ;; ((python-mode latex-mode) . electric-operator-mode)
   :config
   (apply #'electric-operator-add-rules-for-mode 'f90-mode
          (electric-operator-get-rules-for-mode 'prog-mode))
@@ -239,7 +266,11 @@ Inserts spaces around operators, including James' additions to f90 mode.
   (defun electric-operator-character-after-paren()
     "Return the character immediately after the opening brace of the current paren group"
     (let ((ppss (syntax-ppss)))
-      (when (nth 1 ppss) (char-after (+ (nth 1 ppss) 1))))))
+      (when (nth 1 ppss) (char-after (+ (nth 1 ppss) 1)))))
+
+  ;; lisp find definition C-c g
+
+  )
 #+end_src
 
 ** Emacs-Lisp
@@ -387,6 +418,7 @@ Modified to have some extra whitespace before/after the ampersand. Copied from f
 #+end_src
 
 ** Linum
+Linum performs badly and doesn't get along with =visual-fill-column-mode=, now using =display-line-numbers-mode= instead
 #+begin_src emacs-lisp
 (require 'linum)
 (setq linum-disabled-modes-list '(eshell-mode wl-summary-mode
@@ -494,7 +526,7 @@ Make =pdf-tools-install= only run the first time a pdf is opened.
 (setq pdf-view-midnight-colors (cons (face-foreground 'default) (face-background 'default)))
 (defun my-pdf-view-mode-hook ()
   (pdf-view-midnight-minor-mode 1)
-  (linum-mode 0)
+  (display-line-numbers-mode 0)
   )
 (add-hook 'pdf-view-mode-hook 'my-pdf-view-mode-hook)
 #+end_src
@@ -662,6 +694,7 @@ For some reason I can't get =auctex= to work with use-package.
   (setq-default TeX-master nil)
   (setq TeX-PDF-mode t)
   (visual-line-mode 1)
+  (visual-fill-column-mode 1)
   ;; (adaptive-wrap-prefix-mode 1)
   (flyspell-mode 1)
   (LaTeX-math-mode 1)
@@ -671,9 +704,9 @@ For some reason I can't get =auctex= to work with use-package.
   (reftex-mode 1)
   ;; (rainbow-delimiters-mode 1)
   (local-set-key (kbd "C-c m") 'TeX-inline-math-abell)
-  (local-set-key (kbd "C-c H-(") 'abell/TeX-round-brackets)
-  (local-set-key (kbd "C-c H-[") 'abell/TeX-square-brackets)
-  (local-set-key (kbd "C-c H-{") 'abell/TeX-curly-brackets)
+  (local-set-key (kbd "C-c M-(") 'abell/TeX-round-brackets)
+  (local-set-key (kbd "C-c M-[") 'abell/TeX-square-brackets)
+  (local-set-key (kbd "C-c M-{") 'abell/TeX-curly-brackets)
   (local-set-key (kbd "C-M-=") '(lambda () (interactive) (insert "&= ")))
   (local-set-key (kbd "C-c b") 'tex-latex-block)
   (local-set-key (kbd "<C-tab>") 'outline-toggle-children)
@@ -755,6 +788,17 @@ cargo install --git https://github.com/latex-lsp/texlab.git
 #+begin_src emacs-lisp
 (use-package tree-sitter-langs
   :ensure t
+  )
+#+end_src
+
+** visual-fill-column
+#+begin_src emacs-lisp
+(use-package visual-fill-column
+  :ensure t
+  :bind-keymap
+  :config
+  (global-set-key (kbd "<right-margin> <mouse-4>") (kbd "<mouse-4>"))
+  (global-set-key (kbd "<right-margin> <mouse-5>") (kbd "<mouse-5>"))
   )
 #+end_src
 
@@ -1002,8 +1046,8 @@ cargo install --git https://github.com/latex-lsp/texlab.git
 
 *** Code marking
 #+begin_src emacs-lisp
-(global-set-key (kbd "H-n") (lambda () (interactive) (insert-char 10008))) ; ✘
-(global-set-key (kbd "H-y") (lambda () (interactive) (insert-char 10004))) ; ✔
+(global-set-key (kbd "C-c n") (lambda () (interactive) (insert-char 10008))) ; ✘
+(global-set-key (kbd "C-c y") (lambda () (interactive) (insert-char 10004))) ; ✔
 (global-set-key (kbd "C-H-y") (lambda () (interactive) (count-matches "✔" 0 nil t))) ; Count ✔
 #+end_src
 

@@ -1,0 +1,8 @@
+(use-package $0
+  :ensure t
+  :hook
+  :bind-keymap
+  :init
+  :config
+  :commands
+  )
