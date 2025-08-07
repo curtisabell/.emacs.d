@@ -1,0 +1,61 @@
+;;;; Emacs Bookmark Format Version 1 ;;;; -*- coding: utf-8-emacs -*-
+;;; This format is meant to be slightly human-readable;
+;;; nevertheless, you probably don't want to edit it.
+;;; -*- End Of Bookmark File Format Version Stamp -*-
+(("ApplicationsOfModernFortran.tex"
+ (filename . "~/Dropbox/PostGrad/CompPhysNotes/ApplicationsOfModernFortran/ApplicationsOfModernFortran.tex")
+ (front-context-string . "\\documentclass[\n")
+ (rear-context-string)
+ (position . 1))
+("compphys.tex"
+ (filename . "~/Dropbox/PostGrad/Papers/CompPhys/compphys.tex")
+ (front-context-string . "\\documentclass[\n")
+ (rear-context-string)
+ (position . 1))
+("HEFT README"
+ (filename . "~/Dropbox/PhD/HEFT/README.md")
+ (front-context-string . "# HEFT Code\nThis")
+ (rear-context-string)
+ (position . 1))
+("HEFT Docs"
+ (filename . "~/Dropbox/PhD/HEFT_PhD/Documentation/heftCode.tex")
+ (front-context-string . "\\documentclass[a")
+ (rear-context-string)
+ (position . 1))
+("oddParity.tex"
+ (filename . "~/Dropbox/PhD/Papers/Odd-Parity/oddParity.tex")
+ (front-context-string . "\\documentclass[\n")
+ (rear-context-string)
+ (position . 1))
+("multibare.tex"
+ (filename . "~/Dropbox/PhD/Papers/Multiple-bare-states/multibare.tex")
+ (front-context-string . "1}}\n\\newcommand{")
+ (rear-context-string . "}[1]{Sec.~\\ref{#")
+ (position . 866))
+("thesis.tex"
+ (filename . "~/Dropbox/PhD/Thesis/thesis.tex")
+ (front-context-string . "\\documentclass[\n")
+ (rear-context-string)
+ (position . 1))
+("compphys bashrc"
+ (filename .
+	   #("/ssh:a1686392@compphys.rc.adelaide.edu.au:/home/a1686392/.bashrc" 1 4
+	     (helm-ff-file t)
+	     5 13
+	     (helm-ff-file t)
+	     14 41
+	     (helm-ff-file t)))
+ (front-context-string . "# .bashrc\n\n# Sou")
+ (rear-context-string)
+ (position . 1))
+("settings.org"
+ (filename . "~/.emacs.d/settings.org")
+ (front-context-string . "* GUI/Terminal S")
+ (rear-context-string)
+ (position . 1))
+("bash_config"
+ (filename . "~/Dropbox/ConfigFiles/bash/bash_config")
+ (front-context-string . "#! /bin/bash\n\n# ")
+ (rear-context-string)
+ (position . 1))
+)

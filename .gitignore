@@ -12,4 +12,5 @@
 !themes/*
 !init.el
 !settings.org
+!bookmarks
 custom.el
