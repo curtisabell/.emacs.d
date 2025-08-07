@@ -1,4 +1,17 @@
-\documentclass[a4paper]{article}
+\documentclass[
+a4paper
+]{article}
+
+\usepackage{graphicx}
+\usepackage{amssymb,amsmath}
+
+\newcommand{\dk}{d k\,}
+\newcommand{\dkt}{d^3 k\,}
+\newcommand{\dq}{d q\,}
+\newcommand{\dqt}{d^3 q\,}
+\renewcommand{\vec}{\mathbf}
+\renewcommand{\bar}[1]{\mkern 1.8mu\overline{\mkern-1.8mu#1\mkern-1.8mu}\mkern 1.8mu}
+
 \begin{document}
 
 

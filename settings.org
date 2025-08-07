@@ -381,6 +381,14 @@ Modified to have some extra whitespace before/after the ampersand. Copied from f
   (indent-according-to-mode))
 #+end_src
 
+** FORTRAN
+#+begin_src emacs-lisp
+(defun my-FORTRAN-mode-hook ()
+  '(fortran-comment-region "c")
+  )
+(add-hook 'fortran-mode-hook 'my-FORTRAN-mode-hook)
+#+end_src
+
 ** Helm
 #+begin_src emacs-lisp
 (use-package helm
@@ -444,6 +452,16 @@ Linum performs badly and doesn't get along with =visual-fill-column-mode=, now u
   )
 #+end_src
 
+** Markdown
+#+begin_src emacs-lisp
+(use-package markdown-mode
+  :ensure t
+  :bind-keymap
+  ("C-c m" . TeX-inline-math-abell)
+  :config
+  )
+#+end_src
+
 ** Org
 #+begin_src emacs-lisp
 (require 'org)
@@ -454,6 +472,7 @@ Linum performs badly and doesn't get along with =visual-fill-column-mode=, now u
     (define-key global-map "\C-ca" 'org-agenda)
     (visual-line-mode 1)
     (org-indent-mode 1)
+    (visual-fill-column-mode 1)
     (abbrev-mode 1)
     (org-bullets-mode 1)
     (flyspell-mode 1)
@@ -707,6 +726,8 @@ For some reason I can't get =auctex= to work with use-package.
   (local-set-key (kbd "C-c M-(") 'abell/TeX-round-brackets)
   (local-set-key (kbd "C-c M-[") 'abell/TeX-square-brackets)
   (local-set-key (kbd "C-c M-{") 'abell/TeX-curly-brackets)
+  (local-set-key (kbd "C-c M-|") 'abell/TeX-pipe-brackets)
+  (local-set-key (kbd "C-c M-<") 'abell/TeX-angular-brackets)
   (local-set-key (kbd "C-M-=") '(lambda () (interactive) (insert "&= ")))
   (local-set-key (kbd "C-c b") 'tex-latex-block)
   (local-set-key (kbd "<C-tab>") 'outline-toggle-children)
@@ -741,17 +762,24 @@ cargo install --git https://github.com/latex-lsp/texlab.git
 *** TeX functions
 **** Insert inline-math
 #+begin_src emacs-lisp
-  (defun TeX-inline-math-abell()
-    (interactive)
-    (insert "\\(  \\)")
-    (backward-char 3))
+;; ;; Inline using LaTeX notation
+;; (defun TeX-inline-math-abell()
+;;   (interactive)
+;;   (insert "\\(  \\)")
+;;   (backward-char 3))
+
+;; Inline using TeX notation
+(defun TeX-inline-math-abell()
+  (interactive)
+  (insert "$$")
+  (backward-char 1))
 #+end_src
 
 **** New line setup for align environments
 #+begin_src emacs-lisp
   (defun TeX-align-newline-abell()
     (interactive)
-    (insert "\\\\")
+    (insert "\\nonumber\\\\")
     (newline)
     (insert "&= ")
     (indent-for-tab-command))
@@ -775,6 +803,18 @@ cargo install --git https://github.com/latex-lsp/texlab.git
     (interactive)
     (insert "\\left\\{  \\right\\}")
     (backward-char 9)
+    )
+
+  (defun abell/TeX-pipe-brackets ()
+    (interactive)
+    (insert "\\left|  \\right|")
+    (backward-char 8)
+    )
+
+  (defun abell/TeX-angular-brackets ()
+    (interactive)
+    (insert "\\left<  \\right>")
+    (backward-char 8)
     )
 #+end_src
 
@@ -1046,8 +1086,8 @@ cargo install --git https://github.com/latex-lsp/texlab.git
 
 *** Code marking
 #+begin_src emacs-lisp
-(global-set-key (kbd "C-c n") (lambda () (interactive) (insert-char 10008))) ; ✘
-(global-set-key (kbd "C-c y") (lambda () (interactive) (insert-char 10004))) ; ✔
+(global-set-key (kbd "C-c n") (lambda () (interactive) (insert-char 10007))) ; ✗
+(global-set-key (kbd "C-c y") (lambda () (interactive) (insert-char 10003))) ; ✓
 (global-set-key (kbd "C-H-y") (lambda () (interactive) (count-matches "✔" 0 nil t))) ; Count ✔
 #+end_src
 

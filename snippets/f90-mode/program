@@ -1,7 +1,7 @@
 program $1
-  implicit none
+    implicit none
 
-  $0
+    $0
 
 contains
 

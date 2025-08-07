@@ -18,11 +18,13 @@ $0
 
 
 # xtickloc = []
-# plt.xticks(xtickloc)
+# ax.xticks(xtickloc)
 ax.xaxis.set_minor_locator(AutoMinorLocator())
 ax.yaxis.set_minor_locator(AutoMinorLocator())
-plt.tick_params(axis='y', which='major', width=1, length=10, color='black')
-plt.tick_params(axis='x', which='major', width=1, length=10, color='black')
-plt.tick_params(axis='y', which='minor', width=1, length=4,  color='black', direction='in', bottom='on')
-plt.tick_params(axis='x', which='minor', width=1, length=4,  color='black', direction='in', top='on')
+ax.tick_params(axis='y', which='major', width=1, length=10, color='black')
+ax.tick_params(axis='x', which='major', width=1, length=10, color='black')
+ax.tick_params(axis='y', which='minor', width=1, length=4,  color='black'
+               , direction='in', bottom='on')
+ax.tick_params(axis='x', which='minor', width=1, length=4,  color='black'
+               , direction='in', top='on')
 plt.show()
